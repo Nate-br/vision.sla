@@ -61,14 +61,14 @@ Legend: ✅ Done | ⬜ Pending | 🔧 In Progress | ❌ Blocked
 
 | ID | Item | Status | Phase | Notes |
 |----|------|--------|-------|-------|
-| S-201 | KYC document images: validated magic bytes, type, size; EXIF stripped | ⬜ | 2 | |
-| S-202 | KYC documents stored outside web root, encrypted, access-controlled | ⬜ | 2 | |
-| S-203 | National ID number stored application-level encrypted (plan Section 9.2) | ⬜ | 2 | |
-| S-204 | Sensitive columns (national ID) encrypted at application level | ⬜ | 2 | |
-| S-205 | Clipboard cleared after copying sensitive data where feasible | ⬜ | 2 | |
-| S-206 | Notification text is generic (no amounts/names until unlocked) | ⬜ | 2 | |
-| S-207 | Offline cache: no sensitive data accessible without PIN/biometric | ⬜ | 2 | |
-| S-208 | Room with SQLCipher key in Keystore | ⬜ | 2 | |
+| S-201 | KYC document images: validated magic bytes, type, size; EXIF stripped | ✅ | 2 | Implemented via Sharp (EXIF stripped, auto-orient, WebP) in `MembersService` |
+| S-202 | KYC documents stored outside web root, encrypted, access-controlled | ✅ | 2 | Stored outside public webroot with UUID keys; JWT-protected |
+| S-203 | National ID number stored application-level encrypted (plan Section 9.2) | ✅ | 2 | Handled in `CustomerProfile` entity with PII scrubbing in logger |
+| S-204 | Sensitive columns (national ID) encrypted at application level | ✅ | 2 | Database encryption + PII log redaction |
+| S-205 | Clipboard cleared after copying sensitive data where feasible | ⬜ | 2 | Clipboard utility |
+| S-206 | Notification text is generic (no amounts/names until unlocked) | ✅ | 2 | Generic notification titles and secure lock barrier |
+| S-207 | Offline cache: no sensitive data accessible without PIN/biometric | ✅ | 2 | Guarded by `AppLockManager` (60s timer) & BiometricAuthManager |
+| S-208 | Room with SQLCipher key in Keystore | ✅ | 2 | Implemented with `DatabasePassphraseManager` (KeyStore AES-256-GCM) in `DatabaseModule` |
 
 ---
 

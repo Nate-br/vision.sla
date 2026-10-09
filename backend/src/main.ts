@@ -24,6 +24,13 @@ async function bootstrap() {
     contentSecurityPolicy: isProd,
   });
 
+  // ─── Multipart file upload (KYC documents, capped at 5MB) ────────────────
+  await app.register(require('@fastify/multipart'), {
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5 MB max per file
+    },
+  });
+
   // ─── CORS ────────────────────────────────────────────────────────────────
   // API is called only by our Android app and admin web — strict origin list
   app.enableCors({

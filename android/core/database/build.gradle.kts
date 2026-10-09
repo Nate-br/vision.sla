@@ -21,6 +21,7 @@ android {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
+    implementation(project(":core:security"))
 
     // Room with SQLCipher (plan rule: encrypted DB)
     implementation(libs.room.runtime)
