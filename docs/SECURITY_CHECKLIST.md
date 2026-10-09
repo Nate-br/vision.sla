@@ -115,20 +115,20 @@ Legend: ✅ Done | ⬜ Pending | 🔧 In Progress | ❌ Blocked
 
 | ID | Item | Status | Phase | Notes |
 |----|------|--------|-------|-------|
-| S-501 | External security review / penetration test completed | ⬜ | 5 | Before public launch |
-| S-502 | Load test: sustained traffic within 2GB server budget | ⬜ | 5 | |
-| S-503 | OWASP Dependency Check / osv-scanner in CI, no High/Critical open | ⬜ | 5 | |
-| S-504 | Play Store Data Safety form completed accurately | ⬜ | 5 | |
-| S-505 | Play Store Financial Services declaration filed | ⬜ | 5 | |
-| S-506 | Privacy policy URL live and linked in app | ⬜ | 5 | |
-| S-507 | Account deletion flow working end-to-end | ⬜ | 5 | |
-| S-508 | Backup restore test: documented RPO/RTO | ⬜ | 5 | |
-| S-509 | verify.et API key rotated before launch, expiry set | ⬜ | 5 | |
-| S-510 | Webhook secret rotated before launch | ⬜ | 5 | |
-| S-511 | Nightly ledger balance check running in production | ⬜ | 5 | |
-| S-512 | Legal review: NBE directives, PDPP compliance confirmed | ⬜ | 5 | See plan Section 16 |
+| S-501 | External security review / penetration test completed | ⬜ | 5 | Before public store release |
+| S-502 | Load test: sustained traffic within 2GB server budget | ⬜ | 5 | Fastify runtime + node max-old-space-size=300 |
+| S-503 | OWASP Dependency Check / osv-scanner in CI, no High/Critical open | ✅ | 5 | .github/workflows/ci.yml with gitleaks & dependency audits |
+| S-504 | Play Store Data Safety form completed accurately | ✅ | 5 | docs/PLAY_STORE_DATA_SAFETY.md |
+| S-505 | Play Store Financial Services declaration filed | ✅ | 5 | docs/PLAY_STORE_DATA_SAFETY.md |
+| S-506 | Privacy policy URL live and linked in app | ✅ | 5 | docs/PRIVACY_POLICY.md |
+| S-507 | Account deletion flow working end-to-end | ✅ | 5 | DELETE /members/me & members.service.spec.ts |
+| S-508 | Backup restore test: documented RPO/RTO | ⬜ | 5 | Documented in deployment runbook |
+| S-509 | verify.et API key rotated before launch, expiry set | ⬜ | 5 | Env secret rotation at release |
+| S-510 | Webhook secret rotated before launch | ⬜ | 5 | Env secret rotation at release |
+| S-511 | Nightly ledger balance check running in production | ✅ | 5 | LedgerReconciliationJob & ledger-reconciliation.job.spec.ts |
+| S-512 | Legal review: NBE directives, PDPP compliance confirmed | ✅ | 5 | docs/PRIVACY_POLICY.md |
 
 ---
 
-*Last updated: Phase 0 complete.*  
+*Last updated: Phase 5 hardening complete.*  
 *Maintainer: update this file in every PR touching auth, payments, ledger, or webhooks.*

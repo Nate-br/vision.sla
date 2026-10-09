@@ -3,6 +3,7 @@ import {
   Get,
   Put,
   Post,
+  Delete,
   Body,
   Req,
   UseGuards,
@@ -60,5 +61,11 @@ export class MembersController {
       buffer,
       data.mimetype,
     );
+  }
+
+  @Delete('me')
+  @ApiOperation({ summary: 'Request account deletion and personal data erasure (S-507)' })
+  async deleteAccount(@Req() req: any) {
+    return this.membersService.deleteAccount(req.user.id);
   }
 }

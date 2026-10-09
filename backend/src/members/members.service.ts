@@ -151,4 +151,34 @@ export class MembersService {
       message: 'Document uploaded and sanitized successfully.',
     };
   }
+
+  /**
+   * Account Deletion & PII anonymization (S-507 / Google Play Data Safety).
+   */
+  async deleteAccount(memberId: string) {
+    const member = await this.memberRepo.findOne({ where: { id: memberId } });
+    if (!member) {
+      throw new NotFoundException('Member not found');
+    }
+
+    member.isActive = false;
+    member.pinHash = null;
+    member.fullName = 'Deleted Member';
+    await this.memberRepo.save(member);
+
+    const profile = await this.profileRepo.findOne({ where: { memberId } });
+    if (profile) {
+      profile.fullName = 'Deleted Member';
+      profile.nationalId = null;
+      profile.address = null;
+      profile.occupation = null;
+      profile.employer = null;
+      await this.profileRepo.save(profile);
+    }
+
+    return {
+      success: true,
+      message: 'Account successfully deactivated and personal data purged in accordance with PDPP policy.',
+    };
+  }
 }

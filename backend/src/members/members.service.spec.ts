@@ -73,4 +73,47 @@ describe('MembersService', () => {
       ),
     ).rejects.toThrow(BadRequestException);
   });
+
+  it('should deactivate member and anonymize PII upon account deletion (S-507)', async () => {
+    const member: Member = {
+      id: 'mem-123',
+      phoneNumber: '+251911223344',
+      pinHash: 'argon_hash',
+      failedPinAttempts: 0,
+      pinLockoutUntil: null,
+      role: UserRole.MEMBER,
+      kycStatus: KycStatus.APPROVED,
+      fullName: 'Abebe Kebede',
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const profile = {
+      id: 'prof-1',
+      memberId: 'mem-123',
+      fullName: 'Abebe Kebede',
+      gender: null,
+      dateOfBirth: '1990-01-01',
+      nationalId: 'ET-12345678',
+      address: 'Addis Ababa',
+      occupation: 'Merchant',
+      employer: 'Self',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as unknown as CustomerProfile;
+
+    memberRepo.findOne = jest.fn().mockResolvedValue(member);
+    memberRepo.save = jest.fn().mockImplementation((m) => Promise.resolve(m));
+    profileRepo.findOne = jest.fn().mockResolvedValue(profile);
+    profileRepo.save = jest.fn().mockImplementation((p) => Promise.resolve(p));
+
+    const result = await service.deleteAccount('mem-123');
+
+    expect(result.success).toBe(true);
+    expect(member.isActive).toBe(false);
+    expect(member.pinHash).toBeNull();
+    expect(profile.nationalId).toBeNull();
+    expect(profile.fullName).toBe('Deleted Member');
+  });
 });
