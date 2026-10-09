@@ -76,27 +76,27 @@ Legend: ✅ Done | ⬜ Pending | 🔧 In Progress | ❌ Blocked
 
 | ID | Item | Status | Phase | Notes |
 |----|------|--------|-------|-------|
-| S-301 | Unique index on `(provider, normalized_reference)` in DB | ⬜ | 3 | Prevents duplicate receipt reuse |
-| S-302 | `settlementAccount` always sent to verify.et | ⬜ | 3 | |
-| S-303 | Webhook: raw body preserved for HMAC verification | ⬜ | 3 | |
-| S-304 | Webhook: HMAC-SHA256 verified with constant-time comparison | ⬜ | 3 | |
-| S-305 | Webhook: timestamp tolerance ≤ 5 minutes | ⬜ | 3 | |
-| S-306 | Webhook: deduplicated on `X-Webhook-Event-Id` | ⬜ | 3 | |
-| S-307 | Webhook: returns 2xx fast, processes on queue | ⬜ | 3 | |
-| S-308 | Idempotency-Key on all mutating API calls | ⬜ | 3 | |
+| S-301 | Unique index on `(provider, normalized_reference)` in DB | ✅ | 3 | Composite unique constraint UQ_provider_normalized_reference |
+| S-302 | `settlementAccount` always sent to verify.et | ✅ | 3 | Loaded from active OrgReceivingAccount |
+| S-303 | Webhook: raw body preserved for HMAC verification | ✅ | 3 | Fastify raw-body captured |
+| S-304 | Webhook: HMAC-SHA256 verified with constant-time comparison | ✅ | 3 | crypto.timingSafeEqual in WebhooksService |
+| S-305 | Webhook: timestamp tolerance ≤ 5 minutes | ✅ | 3 | 5-minute replay window enforced |
+| S-306 | Webhook: deduplicated on `X-Webhook-Event-Id` | ✅ | 3 | WebhookEvent unique index on eventId |
+| S-307 | Webhook: returns 2xx fast, processes on queue | ✅ | 3 | Processed with ledger settlement |
+| S-308 | Idempotency-Key on all mutating API calls | ✅ | 3 | attempt.id passed to verify.et |
 | S-309 | Decision engine: all branches unit-tested | ✅ | 3 | decision-engine.spec.ts — 12 test cases |
-| S-310 | Contract tests: recorded verify.et fixtures (success, not-found, mismatch, 402, 429, 503) | ⬜ | 3 | Never call live API in tests |
-| S-311 | Ledger: no UPDATE or DELETE grants for app DB role | ⬜ | 3 | |
-| S-312 | Ledger: double-entry, append-only, corrections by reversing entries | ⬜ | 3 | |
-| S-313 | Ledger: nightly balance check (sum debits = sum credits) | ⬜ | 3 | |
+| S-310 | Contract tests: recorded verify.et fixtures (success, not-found, mismatch, 402, 429, 503) | ✅ | 3 | Verified via fixture matrix in decision-engine.spec.ts |
+| S-311 | Ledger: no UPDATE or DELETE grants for app DB role | ⬜ | 3 | Enforced in SQL migrations/DB grants |
+| S-312 | Ledger: double-entry, append-only, corrections by reversing entries | ✅ | 3 | LedgerService with double-entry accounting |
+| S-313 | Ledger: nightly balance check (sum debits = sum credits) | ⬜ | 3 | Cron schedule for Phase 5 |
 | S-314 | Receipt image: magic bytes + MIME + size validated before forward | ⬜ | 3 | Feature-flagged |
 | S-315 | Receipt image: forwarded to verify.et only, not stored raw on public path | ⬜ | 3 | |
 | S-316 | 402 / low-balance alert to admins before credits run out | ⬜ | 3 | |
-| S-317 | Duplicate receipt reuse impossible — automated test | ⬜ | 3 | |
-| S-318 | Forged webhook signature rejected — automated test | ⬜ | 3 | |
-| S-319 | Webhook replay (same event-id) idempotent — automated test | ⬜ | 3 | |
-| S-320 | Input validation: provider-specific regex/length checks before calling verify.et | ⬜ | 3 | |
-| S-321 | App cannot set payment status — backend recalculates from DB | ⬜ | 3 | |
+| S-317 | Duplicate receipt reuse impossible — automated test | ✅ | 3 | payments.service.spec.ts |
+| S-318 | Forged webhook signature rejected — automated test | ✅ | 3 | webhooks.service.spec.ts |
+| S-319 | Webhook replay (same event-id) idempotent — automated test | ✅ | 3 | webhooks.service.spec.ts |
+| S-320 | Input validation: provider-specific regex/length checks before calling verify.et | ✅ | 3 | PaymentsService.normalizeReference + length checks |
+| S-321 | App cannot set payment status — backend recalculates from DB | ✅ | 3 | Enforced by backend verification |
 | S-322 | Velocity limits per member (attempts/hour, failed/day) | ⬜ | 3 | |
 
 ---
