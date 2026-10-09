@@ -17,6 +17,7 @@ import { LedgerModule } from './ledger/ledger.module';
 import { StaffModule } from './staff/staff.module';
 import { JobsModule } from './jobs/jobs.module';
 import { StatementsModule } from './statements/statements.module';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -94,5 +95,6 @@ import { StatementsModule } from './statements/statements.module';
     JobsModule,
     StatementsModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
