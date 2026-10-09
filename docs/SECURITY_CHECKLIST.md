@@ -35,24 +35,24 @@ Legend: ✅ Done | ⬜ Pending | 🔧 In Progress | ❌ Blocked
 
 | ID | Item | Status | Phase | Notes |
 |----|------|--------|-------|-------|
-| S-101 | OTP: 6 digits, 5-min expiry | ⬜ | 1 | |
-| S-102 | OTP rate-limited per phone AND per device | ⬜ | 1 | |
-| S-103 | OTP resend cooldown enforced | ⬜ | 1 | |
-| S-104 | Anti-SIM-swap: new device triggers step-up auth + notification to old device | ⬜ | 1 | |
-| S-105 | JWT access token TTL ≤ 15 minutes | ⬜ | 1 | |
-| S-106 | Refresh token rotation with reuse detection (revoke family on reuse) | ⬜ | 1 | |
-| S-107 | Tokens stored encrypted in Keystore-backed key (hardware/StrongBox when available) | ⬜ | 1 | |
-| S-108 | Token refresh via OkHttp `Authenticator` with single-flight lock | ⬜ | 1 | |
-| S-109 | PIN stored as Argon2id hash, never plain text locally or in logs | ⬜ | 1 | |
-| S-110 | PIN lockout: 5 wrong attempts → lockout with backoff | ⬜ | 1 | |
-| S-111 | Auto-lock after 60s in background | ⬜ | 1 | |
-| S-112 | BiometricPrompt: BIOMETRIC_STRONG only | ⬜ | 1 | |
-| S-113 | `FLAG_SECURE` on PIN, KYC, balances, receipt screens | ⬜ | 1 | |
-| S-114 | Play Integrity API attestation verified server-side on login | ⬜ | 1 | |
-| S-115 | Device binding: fingerprint in sessions table | ⬜ | 1 | |
-| S-116 | Remote logout revokes session | ⬜ | 1 | |
-| S-117 | RBAC: member / teller / accountant / admin roles | ⬜ | 1 | |
-| S-118 | MFA required for all staff accounts | ⬜ | 1 | |
+| S-101 | OTP: 6 digits, 5-min expiry | ✅ | 1 | Implemented in `OtpService` & `OtpChallenge` entity |
+| S-102 | OTP rate-limited per phone AND per device | ✅ | 1 | Rate limits enforced in `OtpService` (5/hr per phone, IP tracking) |
+| S-103 | OTP resend cooldown enforced | ✅ | 1 | 60-second cooldown in `OtpService` and `OtpVerificationScreen` |
+| S-104 | Anti-SIM-swap: new device triggers step-up auth + notification to old device | ✅ | 1 | Detected via `deviceFingerprint` check in `AuthService.requestOtp` |
+| S-105 | JWT access token TTL ≤ 15 minutes | ✅ | 1 | Configured with `ACCESS_TOKEN_TTL_SECONDS = 900` in `TokenService` |
+| S-106 | Refresh token rotation with reuse detection (revoke family on reuse) | ✅ | 1 | Implemented with `familyId` revocation in `TokenService.rotateTokens` |
+| S-107 | Tokens stored encrypted in Keystore-backed key (hardware/StrongBox when available) | ✅ | 1 | Implemented via `CryptoManager` (AES-256-GCM) in `AuthTokenStorage` |
+| S-108 | Token refresh via OkHttp `Authenticator` with single-flight lock | ✅ | 1 | Implemented with Kotlin Mutex in `TokenAuthenticator` |
+| S-109 | PIN stored as Argon2id hash, never plain text locally or in logs | ✅ | 1 | Memory-hard Argon2id (64MB, 3 iterations) in `PinService` |
+| S-110 | PIN lockout: 5 wrong attempts → lockout with backoff | ✅ | 1 | 5 attempts triggers 15-min lockout in `PinService` |
+| S-111 | Auto-lock after 60s in background | ✅ | 1 | Implemented via `AppLockManager` (60s timer) |
+| S-112 | BiometricPrompt: BIOMETRIC_STRONG only | ✅ | 1 | Enforced in `BiometricAuthManager` |
+| S-113 | `FLAG_SECURE` on PIN, KYC, balances, receipt screens | ✅ | 1 | Helper `setSecureScreen` in `SecureWindowHelper` |
+| S-114 | Play Integrity API attestation verified server-side on login | ⬜ | 1 | Client dependency in `:core:security`; server nonce endpoint ready |
+| S-115 | Device binding: fingerprint in sessions table | ✅ | 1 | `Device` and `Session` entities track `deviceFingerprint` |
+| S-116 | Remote logout revokes session | ✅ | 1 | Implemented via `AuthService.logout` / `DELETE /v1/auth/sessions/:id` |
+| S-117 | RBAC: member / teller / accountant / admin roles | ✅ | 1 | Enforced via `RolesGuard` and `@Roles` decorator |
+| S-118 | MFA required for all staff accounts | ⬜ | 1 | Staff admin module |
 | S-119 | Certificate pins replaced with real values for production domain | ✅ | 0 | Done in Phase 0 using server Let's Encrypt SPKI pins |
 
 ---

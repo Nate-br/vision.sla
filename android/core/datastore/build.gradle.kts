@@ -21,6 +21,7 @@ android {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
+    implementation(project(":core:security"))
 
     // DataStore + Keystore encryption (plan: tokens encrypted with Keystore-backed key)
     implementation(libs.datastore.preferences)
