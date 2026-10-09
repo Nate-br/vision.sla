@@ -16,6 +16,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { StaffModule } from './staff/staff.module';
 import { JobsModule } from './jobs/jobs.module';
+import { StatementsModule } from './statements/statements.module';
 
 @Module({
   imports: [
@@ -89,6 +90,7 @@ import { JobsModule } from './jobs/jobs.module';
     LedgerModule,
     StaffModule,
     JobsModule,
+    StatementsModule,
   ],
 })
 export class AppModule {}

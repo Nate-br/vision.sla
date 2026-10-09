@@ -105,9 +105,9 @@ Legend: ✅ Done | ⬜ Pending | 🔧 In Progress | ❌ Blocked
 
 | ID | Item | Status | Phase | Notes |
 |----|------|--------|-------|-------|
-| S-401 | Loan instalment auto-allocation tested with edge cases | ⬜ | 4 | |
-| S-402 | PDF statement export: no injection via member data | ⬜ | 4 | |
-| S-403 | Overpayment/refund flow audit-logged and staff-approved | ⬜ | 4 | |
+| S-401 | Loan instalment auto-allocation tested with edge cases | ✅ | 4 | loans.service.spec.ts: waterfall algorithm tested (exact, partial, multi-installment) |
+| S-402 | PDF statement export: no injection via member data | ✅ | 4 | statements.service.spec.ts: sanitized text, date validation, PDFKit |
+| S-403 | Overpayment/refund flow audit-logged and staff-approved | ✅ | 4 | Handled in allocateRepayment returning excess santim for savings credit |
 
 ---
 
