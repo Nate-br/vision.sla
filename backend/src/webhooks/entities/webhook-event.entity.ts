@@ -18,18 +18,18 @@ export class WebhookEvent {
   @Column({ type: 'varchar', length: 50 })
   eventType: string; // e.g. verification.completed
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'json' })
   payload: Record<string, any>;
 
   @Column({ type: 'boolean', default: false })
   isProcessed: boolean;
 
-  @Column({ type: 'timestamp with time zone', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   processedAt: Date | null;
 
   @Column({ type: 'text', nullable: true })
   processingError: string | null;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   receivedAt: Date;
 }

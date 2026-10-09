@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule } from 'nestjs-pino';
@@ -48,25 +48,27 @@ import { StatementsModule } from './statements/statements.module';
     // ─── Database ────────────────────────────────────────────────────────
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('DATABASE_HOST'),
-        port: config.get<number>('DATABASE_PORT'),
-        database: config.get('DATABASE_NAME'),
-        username: config.get('DATABASE_USER'),
-        password: config.get('DATABASE_PASSWORD'),
-        ssl: config.get('DATABASE_SSL') === 'true',
-        autoLoadEntities: true,
-        // Migrations run as a separate step before deploy — never synchronize in prod
-        synchronize: config.get('NODE_ENV') === 'development',
-        logging: config.get('NODE_ENV') === 'development',
-        extra: {
-          // Pool tuned for 2 GB server (postgres max_connections=30)
-          max: 10,
-          idleTimeoutMillis: 30000,
-          connectionTimeoutMillis: 5000,
-        },
-      }),
+      useFactory: (config: ConfigService): TypeOrmModuleOptions => {
+        const dbType = (config.get('DATABASE_TYPE') || 'postgres') as any;
+        const isMysqlOrMaria = dbType === 'mariadb' || dbType === 'mysql';
+        return {
+          type: isMysqlOrMaria ? 'mariadb' : 'postgres',
+          host: config.get<string>('DATABASE_HOST', 'localhost'),
+          port: config.get<number>('DATABASE_PORT', isMysqlOrMaria ? 3306 : 5432),
+          database: config.get<string>('DATABASE_NAME'),
+          username: config.get<string>('DATABASE_USER'),
+          password: config.get<string>('DATABASE_PASSWORD'),
+          extra: config.get('DATABASE_SOCKET')
+            ? { socketPath: config.get('DATABASE_SOCKET') }
+            : isMysqlOrMaria
+              ? { connectionLimit: 10 }
+              : { max: 10, idleTimeoutMillis: 30000, connectionTimeoutMillis: 5000 },
+          ssl: config.get('DATABASE_SSL') === 'true',
+          autoLoadEntities: true,
+          synchronize: config.get('NODE_ENV') === 'development' || config.get('DATABASE_SYNCHRONIZE') === 'true',
+          logging: config.get('NODE_ENV') === 'development',
+        };
+      },
     }),
 
     // ─── Rate limiting ────────────────────────────────────────────────────

@@ -32,9 +32,9 @@ export class Device {
   @Column({ type: 'boolean', default: false })
   isTrusted: boolean;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   firstSeenAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn()
   lastActiveAt: Date;
 }

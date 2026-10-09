@@ -70,12 +70,12 @@ export class PaymentAttempt {
   @Column({ type: 'varchar', length: 100, nullable: true })
   settlementAccount: string | null;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'json', nullable: true })
   rawVerificationResponse: Record<string, any> | null;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

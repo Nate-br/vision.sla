@@ -36,7 +36,7 @@ export class Member {
   @Column({ type: 'int', default: 0 })
   failedPinAttempts: number;
 
-  @Column({ type: 'timestamp with time zone', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   pinLockoutUntil: Date | null;
 
   @Column({
@@ -59,9 +59,9 @@ export class Member {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

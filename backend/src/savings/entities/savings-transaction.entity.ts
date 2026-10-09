@@ -62,6 +62,6 @@ export class SavingsTransaction {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 }

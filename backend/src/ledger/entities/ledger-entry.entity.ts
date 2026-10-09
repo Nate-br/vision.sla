@@ -48,6 +48,6 @@ export class LedgerEntry {
   description: string | null;
 
   // Append-only constraint: records are never updated or deleted
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 }

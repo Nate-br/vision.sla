@@ -30,12 +30,12 @@ export class Session {
   @Column({ type: 'boolean', default: false })
   isRevoked: boolean;
 
-  @Column({ type: 'timestamp with time zone' })
+  @Column({ type: 'timestamp' })
   expiresAt: Date;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

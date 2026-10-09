@@ -53,9 +53,9 @@ export class CustomerProfile {
   @Column({ type: 'varchar', length: 20, nullable: true })
   emergencyContactPhone: string | null;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

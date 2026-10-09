@@ -27,9 +27,9 @@ export class OtpChallenge {
   @Column({ type: 'boolean', default: false })
   isUsed: boolean;
 
-  @Column({ type: 'timestamp with time zone' })
+  @Column({ type: 'timestamp' })
   expiresAt: Date;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   createdAt: Date;
 }
