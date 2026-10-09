@@ -6,7 +6,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import helmet from 'helmet';
+import helmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -20,7 +20,7 @@ async function bootstrap() {
   const isProd = config.get('NODE_ENV') === 'production';
 
   // ─── Security headers ────────────────────────────────────────────────────
-  await app.register(helmet as any, {
+  await app.register(helmet, {
     contentSecurityPolicy: isProd,
   });
 
