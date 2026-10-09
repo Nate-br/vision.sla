@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  data_extraction_rules.xml
+  ==========================
+  Plan Section 9.1: "allowBackup=false, dataExtractionRules excluding everything"
+
+  This file is referenced by android:dataExtractionRules in the manifest.
+  It prevents Android's backup system from extracting ANY app data —
+  no Room databases, no DataStore files, no tokens, no KYC photos.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </device-transfer>
+</data-extraction-rules>

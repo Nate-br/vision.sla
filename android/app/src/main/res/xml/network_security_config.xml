@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  network_security_config.xml
+  ===========================
+  - Cleartext traffic is FORBIDDEN globally.
+  - Certificate pinning is applied to the production VBL API host.
+  - Pin rotation: update BOTH the primary and the backup pin before the cert expires.
+    Document the rotation date in docs/SECURITY_CHECKLIST.md.
+
+  HOW TO GET THE PIN:
+    openssl s_client -connect api.yourdomain.com:443 2>/dev/null \
+      | openssl x509 -pubkey -noout \
+      | openssl pkey -pubin -outform der \
+      | openssl dgst -sha256 -binary \
+      | base64
+-->
+<network-security-config>
+
+    <!-- Global: no cleartext HTTP anywhere -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Production API: pin the leaf public key + backup intermediate and root CAs -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">savethegeneration.com.et</domain>
+        <domain includeSubdomains="true">api.vbl.et</domain>
+        <!-- Expiration set to current leaf cert expiration: 2026-12-10 (backed by intermediate valid until 2028) -->
+        <pin-set expiration="2026-12-10">
+            <!-- Primary pin: Leaf public key SHA-256 (savethegeneration.com.et) -->
+            <pin digest="SHA-256">sUXu9qnfgvgir6agpAx1t1LdDs3cFGJfRsidolu0EyA=</pin>
+            <!-- Backup pin 1: Let's Encrypt Intermediate CA (CN=YE2, valid to 2028-09-02) -->
+            <pin digest="SHA-256">s/tdAOmUzd8syaTuqfgGvFcn6DzA5Cmb+Vby1ST+U3Y=</pin>
+            <!-- Backup pin 2: ISRG Root CA (ISRG Root X2, valid to 2032-09-02) -->
+            <pin digest="SHA-256">sCkq5UWXjg+7mKu9lMhhYF5bGLsy7VI/UNW3tccdR7w=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!-- Debug overrides: allow debug builds to trust user-installed CAs -->
+    <!-- This block is stripped by R8/AGP in release builds -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+
+</network-security-config>

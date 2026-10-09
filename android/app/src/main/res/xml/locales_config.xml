@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  locales_config.xml — declares supported locales for Android 13+ API.
+  Referenced by android:localeConfig in AndroidManifest.
+  Enables runtime language switching without restart.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en"/>     <!-- English (default) -->
+    <locale android:name="am"/>     <!-- Amharic — አማርኛ -->
+    <locale android:name="om"/>     <!-- Afaan Oromoo -->
+</locale-config>

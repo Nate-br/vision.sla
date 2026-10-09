@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  strings.xml — English (default)
+  ================================
+  RULES (plan Section 15, rule 5):
+  - ALL user-facing text lives here. Never hard-code strings in Kotlin/Compose.
+  - Every entry here must have a corresponding entry in values-am/strings.xml (Amharic)
+    and values-om/strings.xml (Afaan Oromoo).
+  - Missing translations are marked: TODO(translation)
+  - Microcopy rule (plan Section 10): plain, human, no jargon, no blame.
+    Not "ERR_422" but "We couldn't confirm this payment. Your money is safe."
+-->
+<resources>
+    <!-- App -->
+    <string name="app_name">Vision Better Life</string>
+
+    <!-- ─── Payment statuses ─────────────────────────────────────────────── -->
+    <string name="payment_status_draft">Getting ready…</string>
+    <string name="payment_status_submitted">Submitted</string>
+    <string name="payment_status_verifying">Verifying with your bank…</string>
+    <string name="payment_status_pending_retry">Still checking — please wait</string>
+    <string name="payment_status_credited">Payment confirmed ✓</string>
+    <string name="payment_status_manual_review">Under review by our team</string>
+    <string name="payment_status_approved">Approved</string>
+    <string name="payment_status_rejected">Could not verify</string>
+    <string name="payment_status_expired">Expired — please contact support</string>
+
+    <!-- ─── Errors (human, blame-free, money-safe assurance) ─────────────── -->
+    <string name="error_payment_not_verified">We couldn't confirm this payment yet. Your money is safe. Please check the reference number and try again, or contact us.</string>
+    <string name="error_duplicate_receipt">This receipt reference has already been used. If you believe this is a mistake, please contact support.</string>
+    <string name="error_amount_mismatch">The payment amount doesn\'t match. Your money has not been debited from your account with us. Please check the amount and try again.</string>
+    <string name="error_wrong_receiver">The payment was not made to our account. Please pay to the accounts shown on screen.</string>
+    <string name="error_network">No internet connection. Your payment submission is saved and will be sent automatically when you\'re back online.</string>
+    <string name="error_generic">Something went wrong. Please try again. Your money is safe.</string>
+    <string name="error_verification_delayed">Payment verification is temporarily delayed. Your payment is saved — we\'ll notify you as soon as it\'s confirmed.</string>
+
+    <!-- ─── Providers ─────────────────────────────────────────────────────── -->
+    <string name="provider_cbe">Commercial Bank of Ethiopia</string>
+    <string name="provider_telebirr">Telebirr</string>
+    <string name="provider_cbebirr">CBE Birr</string>
+    <string name="provider_boa">Bank of Abyssinia</string>
+    <string name="provider_mpesa">M-Pesa</string>
+    <string name="provider_dashen">Dashen Bank</string>
+    <string name="provider_awash">Awash Bank</string>
+    <string name="provider_siinqee">Siinqee Bank</string>
+    <string name="provider_kaafi">Kaafi Ebirr</string>
+    <string name="provider_coopay">Coopay Ebirr</string>
+    <string name="provider_zemen">Zemen Bank (manual review)</string>
+
+    <!-- ─── Pay flow ──────────────────────────────────────────────────────── -->
+    <string name="pay_only_to_these_accounts">⚠ Pay ONLY to these accounts. We will never ask you to pay to a personal account.</string>
+    <string name="pay_copy_account">Copy account number</string>
+    <string name="pay_copied">Copied!</string>
+    <string name="pay_ive_paid">I\'ve paid — submit reference</string>
+    <string name="pay_enter_reference">Enter payment reference</string>
+    <string name="pay_scan_receipt">Scan receipt</string>
+    <string name="pay_reference_hint">Paste or type your reference number or receipt link</string>
+
+    <!-- ─── Accessibility ─────────────────────────────────────────────────── -->
+    <string name="a11y_loading">Loading, please wait</string>
+    <string name="a11y_retry">Retry</string>
+    <string name="a11y_close">Close</string>
+    <string name="a11y_back">Go back</string>
+    <string name="a11y_copy_account_number">Copy account number to clipboard</string>
+    <string name="a11y_payment_status">Payment status: %1$s</string>
+</resources>

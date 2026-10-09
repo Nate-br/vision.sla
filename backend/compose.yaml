@@ -1,0 +1,125 @@
+# compose.yaml — Rootless Podman stack for VBL backend
+# Plan Section 3.1
+#
+# Usage:
+#   podman compose up -d
+#   (or use Quadlet units in ~/.config/containers/systemd/ for autostart)
+#
+# IMPORTANT (plan Section 3.1):
+#   1. Ports below 1024 require: sysctl net.ipv4.ip_unprivileged_port_start=80
+#   2. Run as systemd user service with: loginctl enable-linger <user>
+#   3. Pin image digests before production — replace ":latest" tags with @sha256:...
+#   4. Never publish Postgres port to host (it is on the internal network only)
+
+name: vbl
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
+  uploads:      # encrypted receipt images / KYC docs (outside web root)
+
+services:
+  # ─── Reverse proxy + TLS ────────────────────────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    # TODO: pin digest before production
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro,Z
+      - caddy_data:/data:Z
+      - caddy_config:/config:Z
+    networks: [internal]
+    mem_limit: 64m
+    depends_on: [api]
+
+  # ─── NestJS API ─────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: ghcr.io/YOUR_ORG/vbl-api:latest  # TODO: pin digest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    env_file:
+      - .env              # mode 600, never committed
+    volumes:
+      - uploads:/app/uploads:Z
+    networks: [internal]
+    expose:
+      - "3000"            # only internal — caddy proxies from 443
+    mem_limit: 400m
+    command: ["node", "--max-old-space-size=300", "dist/main"]
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    # TODO: pin digest before production
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vbl_db
+      POSTGRES_USER: vbl_app
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:Z
+      - ./backend/database/init:/docker-entrypoint-initdb.d:ro,Z
+    networks: [internal]
+    # postgres is NEVER published to host — only the API container talks to it
+    expose:
+      - "5432"
+    mem_limit: 650m
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c max_connections=30
+      -c log_min_duration_statement=1000
+      -c log_connections=on
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vbl_app -d vbl_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - db_password
+
+  # ─── Backup cron (transient) ─────────────────────────────────────────────────
+  backup:
+    image: alpine:3.20
+    # TODO: replace with a custom image that has pg_dump, age, rclone
+    restart: "no"
+    profiles: ["backup"]  # run manually: podman compose --profile backup run backup
+    environment:
+      PGPASSWORD_FILE: /run/secrets/db_password
+      BACKUP_AGE_RECIPIENT: "${BACKUP_AGE_RECIPIENT}"
+      BACKUP_DESTINATION: "${BACKUP_DESTINATION}"
+    networks: [internal]
+    depends_on: [postgres]
+    secrets:
+      - db_password
+    command: >
+      sh -c "
+        echo 'TODO: implement backup script — see docs/BACKUP.md'
+      "
+
+secrets:
+  db_password:
+    external: true   # create with: podman secret create db_password -

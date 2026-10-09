@@ -1,0 +1,532 @@
+openapi: "3.1.0"
+info:
+  title: Vision for a Better Life SLA — API
+  version: "1"
+  description: |
+    Member-facing API for the VBL SLA Android app.
+    
+    **Rules:**
+    - All money values are integer minor units (santim, 1 ETB = 100 santim)
+    - Every mutating call requires an `Idempotency-Key` header
+    - Access tokens: short-lived (≤15 min), sent as `Authorization: Bearer <token>`
+    - Error shape: `{ "error": { "code": "...", "message": "...", "retryable": true|false } }`
+
+servers:
+  - url: https://api.yourdomain.et/v1
+    description: Production
+  - url: http://localhost:3000/v1
+    description: Local development
+
+tags:
+  - name: Auth
+  - name: Members
+  - name: Devices
+  - name: Dashboard
+  - name: Payments
+  - name: Loans
+  - name: Notifications
+  - name: Webhooks
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  headers:
+    IdempotencyKey:
+      description: Client-generated unique key for this request (UUID recommended). Makes mutating calls safe to retry.
+      schema:
+        type: string
+        format: uuid
+      required: true
+
+  schemas:
+    # ─── Common ──────────────────────────────────────────────────────────────
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, retryable]
+          properties:
+            code:
+              type: string
+              example: WRONG_RECEIVER
+            message:
+              type: string
+              example: "We couldn't confirm this payment yet. Your money is safe."
+            retryable:
+              type: boolean
+
+    # ─── Auth ─────────────────────────────────────────────────────────────────
+    OtpRequestBody:
+      type: object
+      required: [phoneNumber, deviceId]
+      properties:
+        phoneNumber:
+          type: string
+          pattern: '^\+251[79]\d{8}$'
+          example: "+251911234567"
+        deviceId:
+          type: string
+          description: Stable device fingerprint (not Android ID — use Installation ID)
+
+    OtpVerifyBody:
+      type: object
+      required: [phoneNumber, otp, deviceId]
+      properties:
+        phoneNumber:
+          type: string
+        otp:
+          type: string
+          pattern: '^\d{6}$'
+        deviceId:
+          type: string
+
+    TokenPair:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+          description: Seconds until access token expiry
+
+    # ─── Payments ─────────────────────────────────────────────────────────────
+    PaymentProvider:
+      type: string
+      enum:
+        - cbe
+        - telebirr
+        - cbebirr
+        - boa
+        - mpesa
+        - dashen
+        - awash
+        - siinqee
+        - kaafiebirr
+        - coopayebirr
+        - zemen
+
+    PaymentStatus:
+      type: string
+      enum:
+        - DRAFT
+        - SUBMITTED
+        - VERIFYING
+        - PENDING_RETRY
+        - VERIFIED_CREDITED
+        - MANUAL_REVIEW
+        - APPROVED
+        - REJECTED
+        - EXPIRED
+
+    PaymentPurpose:
+      type: string
+      enum:
+        - CONTRIBUTION
+        - LOAN_REPAYMENT
+        - FEE
+        - OTHER
+
+    CreatePaymentBody:
+      type: object
+      required: [purpose, invoiceId]
+      properties:
+        purpose:
+          $ref: '#/components/schemas/PaymentPurpose'
+        invoiceId:
+          type: string
+          format: uuid
+        amountSantim:
+          type: integer
+          format: int64
+          description: Expected amount in santim. Required for open contributions.
+
+    SubmitReferenceBody:
+      type: object
+      required: [provider]
+      properties:
+        provider:
+          $ref: '#/components/schemas/PaymentProvider'
+        reference:
+          type: string
+          description: CBE receipt ID or Telebirr transaction number
+        transactionNumber:
+          type: string
+        receiptNumber:
+          type: string
+        phone:
+          type: string
+        referenceNumber:
+          type: string
+        accountSuffix:
+          type: string
+          maxLength: 5
+        suffix:
+          type: string
+          description: 8-digit suffix for old CBE FT... references
+          maxLength: 8
+
+    PaymentAttempt:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        provider:
+          $ref: '#/components/schemas/PaymentProvider'
+        amountSantim:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        timeline:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                $ref: '#/components/schemas/PaymentStatus'
+              timestamp:
+                type: string
+                format: date-time
+              note:
+                type: string
+
+    OrgReceivingAccount:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        provider:
+          $ref: '#/components/schemas/PaymentProvider'
+        displayName:
+          type: string
+          example: "CBE — Vision Better Life SLA"
+        accountNumber:
+          type: string
+        phone:
+          type: string
+        deepLink:
+          type: string
+          description: Deep link to the bank/wallet app (e.g. telebirr:// URI)
+          nullable: true
+
+paths:
+  # ─── Health ────────────────────────────────────────────────────────────────
+  /health:
+    get:
+      tags: [Auth]
+      summary: Health check
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  # ─── Auth ──────────────────────────────────────────────────────────────────
+  /auth/otp/request:
+    post:
+      tags: [Auth]
+      summary: Request an OTP
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpRequestBody'
+      responses:
+        "204":
+          description: OTP sent
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/otp/verify:
+    post:
+      tags: [Auth]
+      summary: Verify OTP and get tokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpVerifyBody'
+      responses:
+        "200":
+          description: Tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        "400":
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Rotate refresh token
+      security: []
+      responses:
+        "200":
+          description: New token pair
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Revoke session
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Session revoked
+
+  # ─── Dashboard ─────────────────────────────────────────────────────────────
+  /dashboard:
+    get:
+      tags: [Dashboard]
+      summary: Member dashboard (balances, due date, recent activity)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  savingsBalanceSantim:
+                    type: integer
+                    format: int64
+                  loanOutstandingSantim:
+                    type: integer
+                    format: int64
+                  nextDueDate:
+                    type: string
+                    format: date
+                  nextDueAmountSantim:
+                    type: integer
+                    format: int64
+                  recentPayments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentAttempt'
+
+  # ─── Organisation receiving accounts ────────────────────────────────────────
+  /org/receiving-accounts:
+    get:
+      tags: [Payments]
+      summary: Get organisation's receiving accounts (where to pay)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Active receiving accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrgReceivingAccount'
+
+  # ─── Payments ──────────────────────────────────────────────────────────────
+  /payments:
+    post:
+      tags: [Payments]
+      summary: Create a payment attempt
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentBody'
+      responses:
+        "201":
+          description: Payment attempt created (DRAFT status)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentAttempt'
+
+    get:
+      tags: [Payments]
+      summary: List payment history (cursor-paginated)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: cursor
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+            maximum: 50
+      responses:
+        "200":
+          description: Payment history page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentAttempt'
+                  nextCursor:
+                    type: string
+                    nullable: true
+
+  /payments/{id}:
+    get:
+      tags: [Payments]
+      summary: Get payment status and timeline
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Payment attempt with full timeline
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentAttempt'
+
+  /payments/{id}/submit:
+    post:
+      tags: [Payments]
+      summary: Submit payment reference or receipt image for verification
+      description: |
+        Triggers verify.et verification. 
+        - JSON body: submit a reference/transaction number.
+        - multipart/form-data: also include a receipt image (feature-flagged, costs image credits).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitReferenceBody'
+      responses:
+        "202":
+          description: Verification submitted — poll GET /payments/{id} or await push notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentAttempt'
+        "402":
+          description: Insufficient verify.et credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "409":
+          description: Duplicate reference — already submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Webhooks (verify.et only — not for the app) ───────────────────────────
+  /webhooks/verify-et:
+    post:
+      tags: [Webhooks]
+      summary: "verify.et webhook receiver (not for the app)"
+      description: |
+        Receives `verification.completed` events from verify.et.
+        - Requires valid HMAC-SHA256 signature in `X-Webhook-Signature` header.
+        - Timestamp tolerance: 5 minutes.
+        - Deduplicated on `X-Webhook-Event-Id`.
+        - Returns 204 immediately; processes event on the job queue.
+      security: []
+      parameters:
+        - in: header
+          name: X-Webhook-Signature
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-Webhook-Timestamp
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-Webhook-Event-Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "204":
+          description: Received — processing async
+        "401":
+          description: Invalid signature

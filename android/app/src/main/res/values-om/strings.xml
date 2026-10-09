@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  strings.xml — Afaan Oromoo
+  ===========================
+  Translator notes:
+  - All strings marked TODO(translation) need professional review.
+  - Afaan Oromoo uses Latin script — no special font required beyond Noto Sans.
+-->
+<resources>
+    <string name="app_name">Mul'ata Jireenyaa Gaarii</string><!-- TODO(translation) -->
+
+    <!-- Payment statuses -->
+    <string name="payment_status_draft">Qophaa'aa jira…</string><!-- TODO(translation) -->
+    <string name="payment_status_submitted">Ergameera</string><!-- TODO(translation) -->
+    <string name="payment_status_verifying">Baankii keessan waliin mirkaneessaa jira…</string><!-- TODO(translation) -->
+    <string name="payment_status_pending_retry">Ammallee ilaalaa jira — maaloo eegaa</string><!-- TODO(translation) -->
+    <string name="payment_status_credited">Kaffaltiin mirkanaayeera ✓</string><!-- TODO(translation) -->
+    <string name="payment_status_manual_review">Garee keenya bira jira</string><!-- TODO(translation) -->
+    <string name="payment_status_approved">Hayyamameera</string><!-- TODO(translation) -->
+    <string name="payment_status_rejected">Mirkaneessuun hin danda\'amne</string><!-- TODO(translation) -->
+    <string name="payment_status_expired">Yeroon dabree — maaloo deeggarsa quunnamaa</string><!-- TODO(translation) -->
+
+    <!-- Errors -->
+    <string name="error_payment_not_verified">Kaffalticha ammallee mirkaneessuun hin danda\'amne. Maallaqqiin keessan nagaha jira. Lakkoofsa xiinxalee irra deebi\'ii yaalaa.</string><!-- TODO(translation) -->
+    <string name="error_duplicate_receipt">Firiimiin kun dura fayyadamameera.</string><!-- TODO(translation) -->
+    <string name="error_amount_mismatch">Baay\'inni kaffaltiichaa hin deemu. Maallaqqiin keessan nagaha jira. Maaloo baay\'ina xiinxalee.</string><!-- TODO(translation) -->
+    <string name="error_wrong_receiver">Kaffaltiichi gara herreega keenya hin ergamne. Maaloo gara herreegawwan ibsamanitti kaffalaa.</string><!-- TODO(translation) -->
+    <string name="error_network">Interneetii hin jiru. Gaaffiin kaffaltiichaa kuufameera — interneetii yeroo argattanitti ergama.</string><!-- TODO(translation) -->
+    <string name="error_generic">Rakkoo uumameera. Irra deebi\'ii yaalaa. Maallaqqiin keessan nagaha jira.</string><!-- TODO(translation) -->
+    <string name="error_verification_delayed">Mirkaneessuu kaffaltiichaa yeroof tumeera. Kaffaltiichaa kuufameera — yeroo mirkanaayetti beeksifna.</string><!-- TODO(translation) -->
+
+    <!-- Providers -->
+    <string name="provider_cbe">Baankii Daldalaa Itoophiyaa</string>
+    <string name="provider_telebirr">Telebirr</string>
+    <string name="provider_cbebirr">CBE Birr</string><!-- TODO(translation) -->
+    <string name="provider_boa">Baankii Abissiniyaa</string>
+    <string name="provider_mpesa">M-Pesa</string>
+    <string name="provider_dashen">Baankii Daasheen</string>
+    <string name="provider_awash">Baankii Awaash</string>
+    <string name="provider_siinqee">Baankii Siinqee</string>
+    <string name="provider_kaafi">Kaafii eBirr</string><!-- TODO(translation) -->
+    <string name="provider_coopay">Coopay eBirr</string><!-- TODO(translation) -->
+    <string name="provider_zemen">Baankii Zemen (sakatta\'a harkaa)</string><!-- TODO(translation) -->
+
+    <!-- Pay flow -->
+    <string name="pay_only_to_these_accounts">⚠ Gara herreegawwan kanneenitti QOFATTI kaffalaa. Herreega dhuunfaatti akka kaffaltan hin gaafannu.</string><!-- TODO(translation) -->
+    <string name="pay_copy_account">Lakkoofsa herreegaa copy godhaa</string><!-- TODO(translation) -->
+    <string name="pay_copied">Copy godhamee!</string><!-- TODO(translation) -->
+    <string name="pay_ive_paid">Kaffalee jira — lakkoofsa galchaa</string><!-- TODO(translation) -->
+    <string name="pay_enter_reference">Lakkoofsa kaffaltiichaa galchaa</string><!-- TODO(translation) -->
+    <string name="pay_scan_receipt">Risiiticha scan godhaa</string><!-- TODO(translation) -->
+    <string name="pay_reference_hint">Lakkoofsa ykn liinkii paste godhaa ykn barreessaa</string><!-- TODO(translation) -->
+
+    <!-- Accessibility -->
+    <string name="a11y_loading">Fe\'aa jira, maaloo eegaa</string><!-- TODO(translation) -->
+    <string name="a11y_retry">Irra deebi\'ii yaalaa</string><!-- TODO(translation) -->
+    <string name="a11y_close">Cufaa</string><!-- TODO(translation) -->
+    <string name="a11y_back">Duubatti deebi\'aa</string><!-- TODO(translation) -->
+    <string name="a11y_copy_account_number">Lakkoofsa herreegaa clipboard irratti copy godhaa</string><!-- TODO(translation) -->
+    <string name="a11y_payment_status">Haala kaffaltiichaa: %1$s</string><!-- TODO(translation) -->
+</resources>

@@ -1,0 +1,46 @@
+# Caddyfile — VBL reverse proxy configuration
+# Serves the API at https://api.{PUBLIC_DOMAIN}
+# Admin web panel at https://admin.{PUBLIC_DOMAIN} (Phase 3+)
+#
+# Let's Encrypt TLS is automatic — make sure the domain points to this server
+# BEFORE starting Caddy for the first time.
+#
+# verify.et webhook requires a public HTTPS URL (plan Section 3.1)
+
+{
+    email admin@vbl.et  # TODO: replace with real ops email for Let's Encrypt
+    # Uncomment to use staging Let's Encrypt during testing:
+    # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# Production domain configuration
+api.savethegeneration.com.et, api.vbl.et {
+    reverse_proxy api:3000 {
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(self), microphone=()"
+        -Server  # remove server header
+    }
+
+    # Rate limit login and webhook endpoints harder
+    # (NestJS throttler handles per-IP; Caddy adds a second layer)
+    @auth_paths path /v1/auth/*
+    handle @auth_paths {
+        rate_limit {remote_host} 20r/m
+        reverse_proxy api:3000
+    }
+
+    log {
+        output file /var/log/caddy/api-access.log
+        format json
+        level INFO
+    }
+}

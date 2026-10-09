@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  strings.xml — አማርኛ (Amharic)
+  ==============================
+  Translator notes:
+  - Microcopy must be warm, blame-free, and reassure the member their money is safe.
+  - Amounts must be written as "ETB 1,500.00" (same format as English).
+  - TODO(translation): All strings marked below need professional review.
+-->
+<resources>
+    <string name="app_name">ቪዥን ቤተር ላይፍ</string><!-- TODO(translation) -->
+
+    <!-- Payment statuses -->
+    <string name="payment_status_draft">በዝግጅት ላይ…</string><!-- TODO(translation) -->
+    <string name="payment_status_submitted">ተልኳል</string><!-- TODO(translation) -->
+    <string name="payment_status_verifying">ከባንክዎ ጋር በማረጋገጥ ላይ…</string><!-- TODO(translation) -->
+    <string name="payment_status_pending_retry">አሁንም እየፈተሸ ነው — እባክዎ ይጠብቁ</string><!-- TODO(translation) -->
+    <string name="payment_status_credited">ክፍያ ተረጋግጧል ✓</string><!-- TODO(translation) -->
+    <string name="payment_status_manual_review">በቡድናችን ስር ይገኛል</string><!-- TODO(translation) -->
+    <string name="payment_status_approved">ፀድቋል</string><!-- TODO(translation) -->
+    <string name="payment_status_rejected">ማረጋገጥ አልተቻለም</string><!-- TODO(translation) -->
+    <string name="payment_status_expired">ጊዜው ያለፈ — እባክዎ ድጋፍ ያነጋግሩ</string><!-- TODO(translation) -->
+
+    <!-- Errors -->
+    <string name="error_payment_not_verified">ይህን ክፍያ ማረጋገጥ ገና አልተቻለም። ገንዘብዎ ደህና ነው። ቁጥሩን ይፈትሹ እና እንደገና ይሞክሩ።</string><!-- TODO(translation) -->
+    <string name="error_duplicate_receipt">ይህ ደረሰኝ ቀደም ሲል ጥቅም ላይ ውሏል።</string><!-- TODO(translation) -->
+    <string name="error_amount_mismatch">የክፍያ መጠኑ አይዛመድም። ገንዘብዎ ደህና ነው። እባክዎ መጠኑን ያረጋግጡ።</string><!-- TODO(translation) -->
+    <string name="error_wrong_receiver">ክፍያው ወደ አካውንታችን አልተደረገም። እባክዎ ከስክሪኑ ላይ ወደተጠቀሱ አካውንቶች ብቻ ይክፈሉ።</string><!-- TODO(translation) -->
+    <string name="error_network">የኢንተርኔት ግንኙነት የለም። ክፍያ ጥያቄዎ ተቀምጧል — ኦንላይን ሲሆኑ ይላካል።</string><!-- TODO(translation) -->
+    <string name="error_generic">ችግር ተፈጠረ። እንደገና ይሞክሩ። ገንዘብዎ ደህና ነው።</string><!-- TODO(translation) -->
+    <string name="error_verification_delayed">ክፍያ ማረጋገጫ ጊዜያዊ ዘገይቷል። ክፍያዎ ተቀምጧል — ሲረጋገጥ እናሳውቅዎታለን።</string><!-- TODO(translation) -->
+
+    <!-- Providers -->
+    <string name="provider_cbe">የኢትዮጵያ ንግድ ባንክ</string>
+    <string name="provider_telebirr">ቴሌብር</string>
+    <string name="provider_cbebirr">CBE ብር</string><!-- TODO(translation) -->
+    <string name="provider_boa">አቢሲኒያ ባንክ</string>
+    <string name="provider_mpesa">M-Pesa</string>
+    <string name="provider_dashen">ዳሸን ባንክ</string>
+    <string name="provider_awash">አዋሽ ባንክ</string>
+    <string name="provider_siinqee">ሲንቄ ባንክ</string><!-- TODO(translation) -->
+    <string name="provider_kaafi">ካፊ ኢብር</string><!-- TODO(translation) -->
+    <string name="provider_coopay">ኮፓይ ኢብር</string><!-- TODO(translation) -->
+    <string name="provider_zemen">ዘምን ባንክ (ማኑዋል ግምገማ)</string><!-- TODO(translation) -->
+
+    <!-- Pay flow -->
+    <string name="pay_only_to_these_accounts">⚠ ወደ እነዚህ አካውንቶች ብቻ ይክፈሉ። ወደ ግለሰብ አካውንት እንዲከፍሉ አንጠይቅም።</string><!-- TODO(translation) -->
+    <string name="pay_copy_account">የአካውንት ቁጥር ይቅዱ</string><!-- TODO(translation) -->
+    <string name="pay_copied">ተቀድቷል!</string><!-- TODO(translation) -->
+    <string name="pay_ive_paid">ከፍያለሁ — ቁጥሩን ያስገቡ</string><!-- TODO(translation) -->
+    <string name="pay_enter_reference">የክፍያ ቁጥር ያስገቡ</string><!-- TODO(translation) -->
+    <string name="pay_scan_receipt">ደረሰኝ ያስቁ</string><!-- TODO(translation) -->
+    <string name="pay_reference_hint">የቁጥር ሪፈረንስ ወይም ሊንክ ይለጥፉ ወይም ይጻፉ</string><!-- TODO(translation) -->
+
+    <!-- Accessibility -->
+    <string name="a11y_loading">እየጫነ ነው፣ እባክዎ ይጠብቁ</string><!-- TODO(translation) -->
+    <string name="a11y_retry">እንደገና ሞክር</string><!-- TODO(translation) -->
+    <string name="a11y_close">ዝጋ</string><!-- TODO(translation) -->
+    <string name="a11y_back">ወደኋላ ተመለስ</string><!-- TODO(translation) -->
+    <string name="a11y_copy_account_number">የአካውንት ቁጥር ወደ ቅንጥብ ሰሌዳ ቅዳ</string><!-- TODO(translation) -->
+    <string name="a11y_payment_status">የክፍያ ሁኔታ፡ %1$s</string><!-- TODO(translation) -->
+</resources>
