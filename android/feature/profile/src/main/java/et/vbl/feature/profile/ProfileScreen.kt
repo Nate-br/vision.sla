@@ -29,8 +29,7 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.HelpOutline
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -71,145 +70,173 @@ fun ProfileScreen(
     var biometricsState by remember { mutableStateOf(isBiometricsEnabled) }
     var notificationsState by remember { mutableStateOf(true) }
 
+    val heroGradient = Brush.verticalGradient(
+        listOf(
+            Color(0xFF031634),
+            Color(0xFF072C67),
+            Color(0xFF0E4698),
+            Color(0xFF1B63CD)
+        )
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F9FC))
-            .statusBarsPadding()
+            .background(Color(0xFF031634))
     ) {
-        // ─── TOP BAR ───────────────────────────────────────────────────
-        Row(
+        // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .background(heroGradient)
+                .statusBarsPadding()
+                .padding(top = 10.dp, bottom = 18.dp)
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .clickable(onClick = onBackClick),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFF101828),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Text(
-                text = "Profile & Settings",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF101828)
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp)
-        ) {
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // ─── MEMBER EXECUTIVE CARD ─────────────────────────────────────
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF031634)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.linearGradient(
-                                listOf(
-                                    Color(0xFF031634),
-                                    Color(0xFF0B2F68),
-                                    Color(0xFF134898)
-                                )
-                            )
-                        )
-                        .padding(20.dp)
+                // Top App Bar
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.16f))
+                            .border(1.dp, Color.White.copy(alpha = 0.28f), CircleShape)
+                            .clickable(onClick = onBackClick),
+                        contentAlignment = Alignment.Center
                     ) {
-                        // User Avatar
-                        Box(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF1A3F7A))
-                                .border(2.dp, Color.White.copy(alpha = 0.8f), CircleShape),
-                            contentAlignment = Alignment.Center
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column {
+                        Text(
+                            text = "Profile & Settings",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "Vision SLA Member Portal",
+                            fontSize = 13.sp,
+                            color = Color.White.copy(alpha = 0.72f)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // MEMBER EXECUTIVE CARD
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(22.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.14f)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(22.dp))
+                            .padding(18.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = fullName,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
+                            // User Avatar
+                            Box(
+                                modifier = Modifier
+                                    .size(54.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF1A3F7A))
+                                    .border(2.dp, Color.White.copy(alpha = 0.85f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Icon(
-                                    imageVector = Icons.Default.CheckCircle,
-                                    contentDescription = "Verified",
-                                    tint = Color(0xFF22C55E),
-                                    modifier = Modifier.size(16.dp)
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(28.dp)
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.width(14.dp))
 
-                            Text(
-                                text = phoneNumber,
-                                fontSize = 13.sp,
-                                color = Color.White.copy(alpha = 0.7f)
-                            )
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = fullName,
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Icon(
+                                        imageVector = Icons.Default.CheckCircle,
+                                        contentDescription = "Verified",
+                                        tint = Color(0xFF22C55E),
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(2.dp))
 
-                            // Member Tier Badge
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFFFB81C).copy(alpha = 0.20f))
-                                    .border(1.dp, Color(0xFFFFB81C).copy(alpha = 0.6f), RoundedCornerShape(12.dp))
-                                    .padding(horizontal = 10.dp, vertical = 3.dp)
-                            ) {
                                 Text(
-                                    text = "SLA PLATINUM MEMBER",
-                                    color = Color(0xFFFFD466),
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    letterSpacing = 0.5.sp
+                                    text = phoneNumber,
+                                    fontSize = 13.sp,
+                                    color = Color.White.copy(alpha = 0.75f)
                                 )
+
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                // Member Tier Badge
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(Color(0xFFFFB81C).copy(alpha = 0.25f))
+                                        .border(1.dp, Color(0xFFFFB81C).copy(alpha = 0.7f), RoundedCornerShape(12.dp))
+                                        .padding(horizontal = 10.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "SLA PLATINUM MEMBER",
+                                        color = Color(0xFFFFD466),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(24.dp))
+        // ─── WHITE CURVED BODY CONTAINER ──────────────────────────────
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 20.dp)
+            ) {
 
             // ─── SECURITY & ACCOUNT ────────────────────────────────────────
             SettingsGroupHeader(title = "SECURITY & ACCESS")
@@ -340,7 +367,7 @@ fun ProfileScreen(
             ) {
                 Column {
                     SettingsRow(
-                        icon = Icons.Outlined.Description,
+                        icon = Icons.Outlined.Language,
                         iconBg = Color(0xFFF8F9FC),
                         iconTint = Color(0xFF344054),
                         title = "Cooperative Agreement & Bylaws",
@@ -350,7 +377,7 @@ fun ProfileScreen(
                     HorizontalDivider(color = Color(0xFFF2F4F7), thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
 
                     SettingsRow(
-                        icon = Icons.Outlined.HelpOutline,
+                        icon = Icons.AutoMirrored.Outlined.HelpOutline,
                         iconBg = Color(0xFFF8F9FC),
                         iconTint = Color(0xFF344054),
                         title = "24/7 Member Support",
@@ -365,8 +392,8 @@ fun ProfileScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
-                    .clip(RoundedCornerShape(26.dp))
+                    .height(54.dp)
+                    .clip(RoundedCornerShape(27.dp))
                     .background(Color(0xFFFEE4E2))
                     .clickable(role = Role.Button, onClick = onLogoutClick),
                 contentAlignment = Alignment.Center
@@ -382,15 +409,16 @@ fun ProfileScreen(
                     Text(
                         text = "Sign Out of Vision SLA",
                         color = Color(0xFFD92D20),
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(140.dp))
         }
     }
+}
 }
 
 @Composable

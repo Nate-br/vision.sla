@@ -13,9 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,12 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import et.vbl.core.designsystem.theme.VblTheme
 
 @Composable
 fun PinSetupScreen(
@@ -84,109 +90,170 @@ fun PinSetupScreen(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(modifier = Modifier.height(40.dp))
-                Text(
-                    text = if (isConfirming) "Confirm your 4-digit PIN" else "Create your 4-digit PIN",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "This PIN will be used to unlock your app and approve transactions securely.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(32.dp))
+    val heroGradient = Brush.verticalGradient(
+        listOf(
+            Color(0xFF02173A),
+            Color(0xFF072C67),
+            Color(0xFF0E4A9E),
+            Color(0xFF1B64CE)
+        )
+    )
 
-                // 4 masked dot indicators
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF02173A))
+    ) {
+        // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.95f)
+                .background(heroGradient)
+                .statusBarsPadding()
+                .padding(28.dp),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White.copy(alpha = 0.16f))
+                        .border(1.dp, Color.White.copy(alpha = 0.28f), RoundedCornerShape(16.dp))
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
-                    for (i in 0 until 4) {
-                        val isFilled = currentInput.length > i
-                        Box(
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if (isFilled) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.surfaceVariant
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = if (isFilled) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.outline,
-                                    shape = CircleShape
-                                )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(13.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Vision SLA Security",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
 
-                if (errorMessage != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = errorMessage!!,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+                Spacer(modifier = Modifier.height(18.dp))
 
-            // Numeric keypad
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                val rows = listOf(
-                    listOf("1", "2", "3"),
-                    listOf("4", "5", "6"),
-                    listOf("7", "8", "9"),
-                    listOf("", "0", "⌫")
+                Text(
+                    text = if (isConfirming) "Confirm\nPIN" else "Create\nSecure PIN",
+                    color = Color.White,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 42.sp,
+                    letterSpacing = (-0.5).sp
                 )
 
-                for (row in rows) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = if (isConfirming)
+                        "Re-enter the same 4 digits to confirm your security PIN"
+                    else
+                        "Set up a 4-digit code to authorize savings deposits and loan approvals",
+                    color = Color.White.copy(alpha = 0.82f),
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp
+                )
+            }
+        }
+
+        // ─── WHITE CURVED BODY CONTAINER ──────────────────────────────
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.35f),
+            shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // 4 Indicator Dots
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalArrangement = Arrangement.spacedBy(18.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        for (key in row) {
+                        for (i in 0 until 4) {
+                            val isFilled = currentInput.length > i
                             Box(
                                 modifier = Modifier
-                                    .size(72.dp)
+                                    .size(20.dp)
                                     .clip(CircleShape)
-                                    .clickable(enabled = key.isNotEmpty()) {
-                                        if (key == "⌫") handleBackspace()
-                                        else handleDigitPress(key)
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (key.isNotEmpty()) {
-                                    Text(
-                                        text = key,
-                                        style = MaterialTheme.typography.headlineMedium,
-                                        fontWeight = FontWeight.Medium,
-                                        fontSize = 26.sp,
-                                        color = MaterialTheme.colorScheme.onBackground
+                                    .background(if (isFilled) Color(0xFF1B64CE) else Color(0xFFF1F3F7))
+                                    .border(
+                                        width = 1.5.dp,
+                                        color = if (isFilled) Color(0xFF1B64CE) else Color(0xFFD0D5DD),
+                                        shape = CircleShape
                                     )
+                            )
+                        }
+                    }
+
+                    if (errorMessage != null) {
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Text(
+                            text = errorMessage!!,
+                            fontSize = 13.sp,
+                            color = Color(0xFFD92D20),
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                // Numeric Keypad
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val rows = listOf(
+                        listOf("1", "2", "3"),
+                        listOf("4", "5", "6"),
+                        listOf("7", "8", "9"),
+                        listOf("", "0", "⌫")
+                    )
+
+                    for (row in rows) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            for (key in row) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(68.dp)
+                                        .clip(CircleShape)
+                                        .background(if (key.isNotEmpty()) Color(0xFFF4F6F9) else Color.Transparent)
+                                        .clickable(enabled = key.isNotEmpty()) {
+                                            if (key == "⌫") handleBackspace()
+                                            else handleDigitPress(key)
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (key.isNotEmpty()) {
+                                        Text(
+                                            text = key,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 24.sp,
+                                            color = Color(0xFF101828)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -194,21 +261,5 @@ fun PinSetupScreen(
                 }
             }
         }
-    }
-}
-
-@Preview(name = "PinSetup - Light", showBackground = true)
-@Composable
-private fun PinSetupLightPreview() {
-    VblTheme(darkTheme = false) {
-        PinSetupScreen()
-    }
-}
-
-@Preview(name = "PinSetup - Dark", showBackground = true)
-@Composable
-private fun PinSetupDarkPreview() {
-    VblTheme(darkTheme = true) {
-        PinSetupScreen()
     }
 }

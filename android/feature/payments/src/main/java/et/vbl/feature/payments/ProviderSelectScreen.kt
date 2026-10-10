@@ -39,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -91,134 +93,166 @@ fun ProviderSelectScreen(
         }
     }
 
+    val heroGradient = Brush.verticalGradient(
+        listOf(
+            Color(0xFF031634),
+            Color(0xFF072C67),
+            Color(0xFF0E4698),
+            Color(0xFF1B63CD)
+        )
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F9FC))
-            .statusBarsPadding()
+            .background(Color(0xFF031634))
     ) {
-        // ─── TOP APP BAR ───────────────────────────────────────────────
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .clickable(onClick = onBackClick),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFF101828),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column {
-                Text(
-                    text = "Deposit & Transfer",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF101828)
-                )
-                Text(
-                    text = "Choose your payment provider",
-                    fontSize = 13.sp,
-                    color = Color(0xFF667085)
-                )
-            }
-        }
-
-        // ─── SEARCH INPUT ──────────────────────────────────────────────
+        // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .background(heroGradient)
+                .statusBarsPadding()
+                .padding(top = 10.dp, bottom = 16.dp)
         ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = {
-                    Text(
-                        text = "Search Telebirr, CBE, Abyssinia...",
-                        fontSize = 14.sp,
-                        color = Color(0xFF98A2B3)
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = Color(0xFF98A2B3),
-                        modifier = Modifier.size(20.dp)
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(26.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedBorderColor = Color(0xFF1B63CD),
-                    unfocusedBorderColor = Color(0xFFE4E7EC)
-                ),
-                singleLine = true
-            )
-        }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Top App Bar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.16f))
+                            .border(1.dp, Color.White.copy(alpha = 0.28f), CircleShape)
+                            .clickable(onClick = onBackClick),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
 
-        // ─── FILTER TABS ───────────────────────────────────────────────
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            filterTabs.forEachIndexed { index, tab ->
-                val isSelected = selectedFilterIndex == index
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column {
+                        Text(
+                            text = "Save & Deposit",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "Direct transfer to Vision SLA account",
+                            fontSize = 13.sp,
+                            color = Color.White.copy(alpha = 0.72f)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Search Input inside Blue Hero
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(if (isSelected) Color(0xFF031634) else Color.White)
-                        .clickable { selectedFilterIndex = index }
-                        .padding(horizontal = 14.dp, vertical = 8.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
                 ) {
-                    Text(
-                        text = tab,
-                        fontSize = 13.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                        color = if (isSelected) Color.White else Color(0xFF667085)
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = {
+                            Text(
+                                text = "Search Telebirr, CBE, Abyssinia...",
+                                fontSize = 14.sp,
+                                color = Color.White.copy(alpha = 0.65f)
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = Color.White.copy(alpha = 0.8f),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape = RoundedCornerShape(26.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color.White.copy(alpha = 0.15f),
+                            unfocusedContainerColor = Color.White.copy(alpha = 0.12f),
+                            focusedBorderColor = Color.White.copy(alpha = 0.45f),
+                            unfocusedBorderColor = Color.White.copy(alpha = 0.20f),
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        singleLine = true
                     )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Filter Tabs
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    filterTabs.forEachIndexed { index, tab ->
+                        val isSelected = selectedFilterIndex == index
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(if (isSelected) Color.White else Color.White.copy(alpha = 0.16f))
+                                .border(
+                                    1.dp,
+                                    if (isSelected) Color.White else Color.White.copy(alpha = 0.25f),
+                                    RoundedCornerShape(20.dp)
+                                )
+                                .clickable { selectedFilterIndex = index }
+                                .padding(horizontal = 14.dp, vertical = 7.dp)
+                        ) {
+                            Text(
+                                text = tab,
+                                fontSize = 12.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) Color(0xFF031634) else Color.White
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
-
-        // ─── PROVIDERS LIST ────────────────────────────────────────────
-        LazyColumn(
+        // ─── WHITE CURVED BODY CONTAINER ──────────────────────────────
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .fillMaxWidth()
+                .weight(1f),
+            shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            items(displayedProviders, key = { it.name }) { provider ->
-                ProviderCard(
-                    provider = provider,
-                    onClick = { onProviderSelected(provider) }
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 140.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(displayedProviders, key = { it.name }) { provider ->
+                    ProviderCard(
+                        provider = provider,
+                        onClick = { onProviderSelected(provider) }
+                    )
+                }
             }
         }
     }

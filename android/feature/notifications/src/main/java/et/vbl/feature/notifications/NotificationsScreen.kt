@@ -1,6 +1,7 @@
 package et.vbl.feature.notifications
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,29 +13,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.CreditScore
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.VerifiedUser
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import et.vbl.core.designsystem.theme.VblTheme
 
 data class NotificationItemUiModel(
     val id: String,
@@ -55,41 +60,77 @@ fun NotificationsScreen(
     onNotificationClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    val heroGradient = Brush.verticalGradient(
+        listOf(
+            Color(0xFF031634),
+            Color(0xFF072C67),
+            Color(0xFF0E4698),
+            Color(0xFF1B63CD)
+        )
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF031634))
     ) {
-        Column(
+        // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
+                .fillMaxWidth()
+                .background(heroGradient)
+                .statusBarsPadding()
+                .padding(top = 10.dp, bottom = 22.dp)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Header
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "← Back",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = onBackClick)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.16f))
+                        .border(1.dp, Color.White.copy(alpha = 0.28f), CircleShape)
+                        .clickable(onClick = onBackClick),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = "Notifications",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Activity & Cooperative Alerts",
+                        fontSize = 13.sp,
+                        color = Color.White.copy(alpha = 0.72f)
+                    )
+                }
             }
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Notifications",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
+        // ─── WHITE CURVED BODY CONTAINER ──────────────────────────────
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
             if (notifications.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -99,23 +140,26 @@ fun NotificationsScreen(
                 ) {
                     Text(
                         text = "No notifications yet",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        fontSize = 15.sp,
+                        color = Color(0xFF98A2B3)
                     )
                 }
             } else {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp, vertical = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(notifications, key = { it.id }) { item ->
+                    items(notifications, key = { it.id }) { notif ->
                         NotificationCard(
-                            notification = item,
-                            onClick = { onNotificationClick(item.id) }
+                            notification = notif,
+                            onClick = { onNotificationClick(notif.id) }
                         )
                     }
+
                     item {
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(60.dp))
                     }
                 }
             }
@@ -128,26 +172,22 @@ private fun NotificationCard(
     notification: NotificationItemUiModel,
     onClick: () -> Unit
 ) {
-    val containerColor = if (notification.isRead) {
-        MaterialTheme.colorScheme.surface
-    } else {
-        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
-    }
-
-    val iconSymbol = when (notification.type) {
-        "PAYMENT" -> "💳"
-        "LOAN" -> "📈"
-        "KYC" -> "🪪"
-        else -> "🔔"
+    val (iconVector: ImageVector, iconTint: Color, iconBg: Color) = when (notification.type) {
+        "PAYMENT" -> Triple(Icons.Outlined.AccountBalanceWallet, Color(0xFF16A34A), Color(0xFFDCFCE7))
+        "LOAN" -> Triple(Icons.Outlined.CreditScore, Color(0xFF1B63CD), Color(0xFFEFF4FF))
+        "KYC" -> Triple(Icons.Outlined.VerifiedUser, Color(0xFF7C3AED), Color(0xFFF3E8FF))
+        else -> Triple(Icons.Outlined.Notifications, Color(0xFFD97706), Color(0xFFFEF3C7))
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(role = Role.Button, onClick = onClick)
-            .semantics { role = Role.Button },
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = containerColor)
+            .clickable(role = Role.Button, onClick = onClick),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (notification.isRead) Color.White else Color(0xFFF0F4FE)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
@@ -155,8 +195,24 @@ private fun NotificationCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Text(text = iconSymbol, fontSize = 24.sp)
+            // Professional Vector Icon (No emojis)
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(iconBg),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = iconVector,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.width(14.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -165,14 +221,14 @@ private fun NotificationCard(
                 ) {
                     Text(
                         text = notification.title,
-                        style = MaterialTheme.typography.titleSmall,
+                        fontSize = 15.sp,
                         fontWeight = if (!notification.isRead) FontWeight.Bold else FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = Color(0xFF101828)
                     )
                     Text(
                         text = notification.timeAgo,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        fontSize = 12.sp,
+                        color = Color(0xFF98A2B3)
                     )
                 }
 
@@ -180,36 +236,11 @@ private fun NotificationCard(
 
                 Text(
                     text = notification.message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            if (!notification.isRead) {
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                    fontSize = 13.sp,
+                    color = Color(0xFF475467),
+                    lineHeight = 18.sp
                 )
             }
         }
-    }
-}
-
-@Preview(name = "NotificationsScreen - Light", showBackground = true)
-@Composable
-private fun NotificationsScreenLightPreview() {
-    VblTheme(darkTheme = false) {
-        NotificationsScreen()
-    }
-}
-
-@Preview(name = "NotificationsScreen - Dark", showBackground = true)
-@Composable
-private fun NotificationsScreenDarkPreview() {
-    VblTheme(darkTheme = true) {
-        NotificationsScreen()
     }
 }

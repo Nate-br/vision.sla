@@ -79,7 +79,8 @@ fun HomeScreen(
     onTabSelected: (Int) -> Unit = {},
     onDepositClick: () -> Unit = {},
     onTransferClick: () -> Unit = {},
-    onWithdrawClick: () -> Unit = {},
+    onLoanClick: () -> Unit = {},
+    onWithdrawClick: () -> Unit = onLoanClick,
     onNotificationsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onAnalyticsClick: () -> Unit = {},
@@ -90,47 +91,47 @@ fun HomeScreen(
         listOf(
             TransactionItem(
                 id = "1",
-                title = "Adobe Creative Cloud",
+                title = "Monthly SLA Savings",
                 dateSubtitle = "Today, 09:42",
-                amountFormatted = "-$59.99",
-                isPositive = false,
-                icon = Icons.Outlined.Palette,
-                iconBg = Color(0xFFF2F4F8)
+                amountFormatted = "+$250.00",
+                isPositive = true,
+                icon = Icons.Outlined.AccountBalance,
+                iconBg = Color(0xFFEBFDF2)
             ),
             TransactionItem(
                 id = "2",
-                title = "Stripe Payout",
+                title = "Telebirr Mobile Deposit",
                 dateSubtitle = "Today, 08:15",
-                amountFormatted = "$187.50",
+                amountFormatted = "+$187.50",
                 isPositive = true,
-                icon = Icons.Outlined.AccountBalance,
+                icon = Icons.Outlined.ShoppingBag,
                 iconBg = Color(0xFFEBF3FF)
             ),
             TransactionItem(
                 id = "3",
-                title = "Office Supplies",
+                title = "Emergency Loan Disbursed",
                 dateSubtitle = "Jun 28, 10:22",
-                amountFormatted = "$24.00",
+                amountFormatted = "+$1,500.00",
                 isPositive = true,
                 icon = Icons.Outlined.WorkOutline,
-                iconBg = Color(0xFFF2F4F7)
+                iconBg = Color(0xFFEFF4FF)
             ),
             TransactionItem(
                 id = "4",
-                title = "AWS Cloud Hosting",
+                title = "Monthly Loan Repayment",
                 dateSubtitle = "Jun 24, 18:30",
                 amountFormatted = "-$97.50",
                 isPositive = false,
-                icon = Icons.Outlined.CloudQueue,
+                icon = Icons.Outlined.Schedule,
                 iconBg = Color(0xFFF2F4F8)
             ),
             TransactionItem(
                 id = "5",
-                title = "SLA Monthly Contribution",
+                title = "Voluntary Share Contribution",
                 dateSubtitle = "Jun 20, 12:00",
-                amountFormatted = "$250.00",
+                amountFormatted = "+$75.00",
                 isPositive = true,
-                icon = Icons.Outlined.ShoppingBag,
+                icon = Icons.Outlined.Palette,
                 iconBg = Color(0xFFEBFDF2)
             )
         )
@@ -368,7 +369,7 @@ fun HomeScreen(
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // Quick Action Buttons Row: [↗ Deposit] [⇅] [↘ Withdraw]
+                        // Quick Action Buttons Row: [↗ Deposit] [⇅] [↘ Apply Loan]
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -376,7 +377,7 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Deposit Button
+                            // Deposit / Save Button
                             QuickActionPill(
                                 icon = Icons.Default.NorthEast,
                                 label = "Deposit",
@@ -401,18 +402,18 @@ fun HomeScreen(
                                 )
                             }
 
-                            // Withdraw Button
+                            // Loan Button (NO WITHDRAW)
                             QuickActionPill(
                                 icon = Icons.Default.SouthEast,
-                                label = "Withdraw",
-                                onClick = onWithdrawClick,
+                                label = "Apply Loan",
+                                onClick = onLoanClick,
                                 modifier = Modifier.weight(1.3f)
                             )
                         }
 
                         Spacer(modifier = Modifier.height(28.dp))
 
-                        // Recent Transactions Header
+                        // Recent Savings & Loans Header
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -421,7 +422,7 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Recent Transactions",
+                                text = "Recent Savings & Loans",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF101828)
@@ -513,14 +514,6 @@ fun FloatingBottomDock(
                 icon = Icons.Outlined.CropFree,
                 contentDescription = "Loans",
                 onClick = { onTabSelected(3) }
-            )
-
-            // Tab 4: Profile & Settings ⊞
-            DockTabButton(
-                isSelected = currentTab == 4,
-                icon = Icons.Outlined.Apps,
-                contentDescription = "Settings",
-                onClick = { onTabSelected(4) }
             )
         }
     }

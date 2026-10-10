@@ -50,6 +50,7 @@ fun MainContainerScreen(
                         onTabSelected = { currentTab = it },
                         onDepositClick = { currentTab = 1 },
                         onTransferClick = { currentTab = 1 },
+                        onLoanClick = { currentTab = 3 },
                         onWithdrawClick = { currentTab = 3 },
                         onAnalyticsClick = { currentTab = 2 },
                         onScanClick = { currentTab = 3 },
@@ -90,17 +91,19 @@ fun MainContainerScreen(
             }
         }
 
-        // Persistent Floating Bottom Dock across all tabs
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(bottom = 16.dp)
-        ) {
-            FloatingBottomDock(
-                currentTab = currentTab,
-                onTabSelected = { currentTab = it }
-            )
+        // Persistent Floating Bottom Dock across the 4 main tabs (hidden when on Profile)
+        if (currentTab in 0..3) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(bottom = 16.dp)
+            ) {
+                FloatingBottomDock(
+                    currentTab = currentTab,
+                    onTabSelected = { currentTab = it }
+                )
+            }
         }
     }
 }

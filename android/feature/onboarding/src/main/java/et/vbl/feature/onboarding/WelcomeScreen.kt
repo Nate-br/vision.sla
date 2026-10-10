@@ -378,13 +378,13 @@ fun WelcomeScreen(
             ModalBottomSheet(
                 onDismissRequest = { showLearnMoreSheet = false },
                 sheetState = sheetState,
-                containerColor = Color.White,
+                containerColor = Color(0xFF041838),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                        .padding(horizontal = 24.dp, vertical = 14.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -395,13 +395,13 @@ fun WelcomeScreen(
                             text = "Vision SLA Ecosystem",
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF101828)
+                            color = Color.White
                         )
                         IconButton(onClick = { showLearnMoreSheet = false }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Close",
-                                tint = Color(0xFF667085)
+                                tint = Color.White.copy(alpha = 0.7f)
                             )
                         }
                     }
@@ -409,9 +409,9 @@ fun WelcomeScreen(
                     Text(
                         text = "Ethical, community-governed micro-finance cooperative engineered for financial freedom.",
                         fontSize = 14.sp,
-                        color = Color(0xFF667085),
+                        color = Color.White.copy(alpha = 0.75f),
                         lineHeight = 20.sp,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 20.dp)
+                        modifier = Modifier.padding(top = 4.dp, bottom = 22.dp)
                     )
 
                     // 3 Feature Pillars
@@ -439,9 +439,9 @@ fun WelcomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(54.dp)
-                            .clip(RoundedCornerShape(27.dp))
-                            .background(Color(0xFF031634))
+                            .height(56.dp)
+                            .clip(RoundedCornerShape(28.dp))
+                            .background(Color.White)
                             .clickable(role = Role.Button) {
                                 showLearnMoreSheet = false
                                 onNextClick()
@@ -450,13 +450,13 @@ fun WelcomeScreen(
                     ) {
                         Text(
                             text = "Get Started Now",
-                            color = Color.White,
+                            color = Color(0xFF101828),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }
@@ -477,13 +477,14 @@ private fun FeaturePillarRow(
             modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFEFF4FF)),
+                .background(Color.White.copy(alpha = 0.14f))
+                .border(1.dp, Color.White.copy(alpha = 0.22f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color(0xFF1B63CD),
+                tint = Color.White,
                 modifier = Modifier.size(22.dp)
             )
         }
@@ -493,13 +494,13 @@ private fun FeaturePillarRow(
                 text = title,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF101828)
+                color = Color.White
             )
             Spacer(modifier = Modifier.height(3.dp))
             Text(
                 text = description,
                 fontSize = 13.sp,
-                color = Color(0xFF667085),
+                color = Color.White.copy(alpha = 0.72f),
                 lineHeight = 18.sp
             )
         }

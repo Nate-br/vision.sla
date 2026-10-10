@@ -221,7 +221,7 @@ fun ExpensesBubblesScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 22.dp)
+                    .padding(start = 24.dp, end = 24.dp, top = 22.dp, bottom = 120.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
