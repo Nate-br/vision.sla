@@ -7,10 +7,10 @@
   - Afaan Oromoo uses Latin script — no special font required beyond Noto Sans.
 -->
 <resources>
-    <string name="app_name">Mul'ata Jireenyaa Gaarii</string><!-- TODO(translation) -->
+    <string name="app_name">Mul\'ata Jireenyaa Gaarii</string><!-- TODO(translation) -->
 
     <!-- Payment statuses -->
-    <string name="payment_status_draft">Qophaa'aa jira…</string><!-- TODO(translation) -->
+    <string name="payment_status_draft">Qophaa\'aa jira…</string><!-- TODO(translation) -->
     <string name="payment_status_submitted">Ergameera</string><!-- TODO(translation) -->
     <string name="payment_status_verifying">Baankii keessan waliin mirkaneessaa jira…</string><!-- TODO(translation) -->
     <string name="payment_status_pending_retry">Ammallee ilaalaa jira — maaloo eegaa</string><!-- TODO(translation) -->

@@ -26,7 +26,7 @@
     <string name="payment_status_expired">Expired — please contact support</string>
 
     <!-- ─── Errors (human, blame-free, money-safe assurance) ─────────────── -->
-    <string name="error_payment_not_verified">We couldn't confirm this payment yet. Your money is safe. Please check the reference number and try again, or contact us.</string>
+    <string name="error_payment_not_verified">We couldn\'t confirm this payment yet. Your money is safe. Please check the reference number and try again, or contact us.</string>
     <string name="error_duplicate_receipt">This receipt reference has already been used. If you believe this is a mistake, please contact support.</string>
     <string name="error_amount_mismatch">The payment amount doesn\'t match. Your money has not been debited from your account with us. Please check the amount and try again.</string>
     <string name="error_wrong_receiver">The payment was not made to our account. Please pay to the accounts shown on screen.</string>

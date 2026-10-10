@@ -5,9 +5,35 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import et.vbl.core.designsystem.theme.VblTheme
+import et.vbl.core.model.PaymentProvider
+import et.vbl.feature.home.ExpensesBubblesScreen
+import et.vbl.feature.home.HomeScreen
+import et.vbl.feature.loans.LoanApplicationScreen
+import et.vbl.feature.loans.LoanCatalogScreen
+import et.vbl.feature.notifications.NotificationsScreen
+import et.vbl.feature.onboarding.BiometricSetupScreen
+import et.vbl.feature.onboarding.OtpVerificationScreen
+import et.vbl.feature.onboarding.PhoneInputScreen
+import et.vbl.feature.onboarding.PinSetupScreen
+import et.vbl.feature.onboarding.WelcomeScreen
+import et.vbl.feature.payments.PaymentInstructionScreen
+import et.vbl.feature.payments.PaymentTimelineScreen
+import et.vbl.feature.payments.ProviderSelectScreen
+import et.vbl.feature.payments.ReferenceEntryScreen
+import et.vbl.feature.profile.KycUploadScreen
+import et.vbl.feature.profile.ProfileScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -16,7 +42,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            VblTheme {
+            VblTheme(darkTheme = false) {
                 VblApp()
             }
         }
@@ -25,8 +51,208 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun VblApp() {
-    // Navigation host — wired in Phase 1
-    // NavHost(navController, startDestination = ...) { ... }
+    val navController = rememberNavController()
+    var enteredPhone by remember { mutableStateOf("+251911223344") }
+
+    NavHost(
+        navController = navController,
+        startDestination = "welcome"
+    ) {
+        // ─── WELCOME HERO (SCREEN 2) ──────────────────────────────────
+        composable("welcome") {
+            WelcomeScreen(
+                onLearnMoreClick = {
+                    navController.navigate("phone_input")
+                },
+                onSkipToDashboard = {
+                    navController.navigate("home")
+                }
+            )
+        }
+
+        // ─── ONBOARDING FLOW ───────────────────────────────────────────
+        composable("phone_input") {
+            PhoneInputScreen(
+                onContinue = { phone ->
+                    enteredPhone = phone
+                    navController.navigate("otp_verification")
+                }
+            )
+        }
+        composable("otp_verification") {
+            OtpVerificationScreen(
+                phoneNumber = enteredPhone,
+                onVerifyOtp = {
+                    navController.navigate("pin_setup")
+                }
+            )
+        }
+        composable("pin_setup") {
+            PinSetupScreen(
+                onPinCreated = {
+                    navController.navigate("biometric_setup")
+                }
+            )
+        }
+        composable("biometric_setup") {
+            BiometricSetupScreen(
+                onEnableBiometrics = {
+                    navController.navigate("home") {
+                        popUpTo("welcome") { inclusive = true }
+                    }
+                },
+                onSkip = {
+                    navController.navigate("home") {
+                        popUpTo("welcome") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // ─── HOME DASHBOARD (SCREEN 1) ─────────────────────────────────
+        composable("home") {
+            HomeScreen(
+                onDepositClick = {
+                    navController.navigate("payments_provider_select")
+                },
+                onTransferClick = {
+                    navController.navigate("payments_provider_select")
+                },
+                onWithdrawClick = {
+                    navController.navigate("loans_catalog")
+                },
+                onNotificationsClick = {
+                    navController.navigate("notifications")
+                },
+                onProfileClick = {
+                    navController.navigate("profile")
+                },
+                onAnalyticsClick = {
+                    navController.navigate("expenses_bubbles")
+                },
+                onScanClick = {
+                    navController.navigate("payments_provider_select")
+                },
+                onSeeAllTransactionsClick = {
+                    navController.navigate("payments_timeline")
+                }
+            )
+        }
+
+        // ─── EXPENSES BUBBLES ANALYTICS ────────────────────────────────
+        composable("expenses_bubbles") {
+            ExpensesBubblesScreen(
+                onBackClick = { navController.popBackStack() },
+                onSeeAllClick = { navController.navigate("payments_timeline") }
+            )
+        }
+
+        // ─── PAYMENTS & DEPOSITS FLOW ──────────────────────────────────
+        composable("payments_provider_select") {
+            ProviderSelectScreen(
+                onProviderSelected = { provider ->
+                    navController.navigate("payments_instruction/${provider.name}")
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = "payments_instruction/{providerName}",
+            arguments = listOf(navArgument("providerName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val providerName = backStackEntry.arguments?.getString("providerName") ?: PaymentProvider.TELEBIRR.name
+            val provider = runCatching { PaymentProvider.valueOf(providerName) }.getOrDefault(PaymentProvider.TELEBIRR)
+
+            PaymentInstructionScreen(
+                provider = provider,
+                onProceedToReference = {
+                    navController.navigate("payments_reference/${provider.name}")
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = "payments_reference/{providerName}",
+            arguments = listOf(navArgument("providerName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val providerName = backStackEntry.arguments?.getString("providerName") ?: PaymentProvider.TELEBIRR.name
+            val provider = runCatching { PaymentProvider.valueOf(providerName) }.getOrDefault(PaymentProvider.TELEBIRR)
+
+            ReferenceEntryScreen(
+                provider = provider,
+                onSubmitPayment = { _, _, _ ->
+                    navController.navigate("payments_timeline")
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable("payments_timeline") {
+            PaymentTimelineScreen(
+                onViewHome = {
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
+                onRetry = { navController.popBackStack() },
+                onContactSupport = { navController.navigate("home") }
+            )
+        }
+
+        // ─── LOANS FLOW ────────────────────────────────────────────────
+        composable("loans_catalog") {
+            LoanCatalogScreen(
+                onApplyClick = { _ ->
+                    navController.navigate("loan_application")
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable("loan_application") {
+            LoanApplicationScreen(
+                onSubmitApplication = { _, _, _ ->
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // ─── NOTIFICATIONS ─────────────────────────────────────────────
+        composable("notifications") {
+            NotificationsScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // ─── PROFILE & KYC ─────────────────────────────────────────────
+        composable("profile") {
+            ProfileScreen(
+                onKycClick = {
+                    navController.navigate("kyc_upload")
+                },
+                onLogoutClick = {
+                    navController.navigate("phone_input") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable("kyc_upload") {
+            KycUploadScreen(
+                onUploadDocument = { _, _ ->
+                    navController.popBackStack()
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
