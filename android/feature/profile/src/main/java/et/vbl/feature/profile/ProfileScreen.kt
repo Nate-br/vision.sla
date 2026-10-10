@@ -1,6 +1,7 @@
 package et.vbl.feature.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,19 +13,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.HelpOutline
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,21 +47,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import et.vbl.core.designsystem.theme.VblTheme
 
 @Composable
 fun ProfileScreen(
     fullName: String = "Abebe Kebede",
-    phoneNumber: String = "+251911223344",
-    kycStatus: String = "NOT_SUBMITTED",
+    phoneNumber: String = "+251 91 122 3344",
+    kycStatus: String = "VERIFIED",
     isBiometricsEnabled: Boolean = true,
     onKycClick: () -> Unit = {},
     onChangePinClick: () -> Unit = {},
@@ -58,227 +69,406 @@ fun ProfileScreen(
     onBackClick: () -> Unit = {}
 ) {
     var biometricsState by remember { mutableStateOf(isBiometricsEnabled) }
+    var notificationsState by remember { mutableStateOf(true) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF8F9FC))
+            .statusBarsPadding()
     ) {
+        // ─── TOP BAR ───────────────────────────────────────────────────
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .clickable(onClick = onBackClick),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color(0xFF101828),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "Profile & Settings",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF101828)
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(20.dp)
+                .padding(horizontal = 20.dp)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Back button
-            Row(
+            // ─── MEMBER EXECUTIVE CARD ─────────────────────────────────────
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                Text(
-                    text = "Profile & Settings",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Profile Header
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                shape = RoundedCornerShape(22.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF031634)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(68.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = fullName.take(1).uppercase(),
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-
-                Column(modifier = Modifier.padding(start = 16.dp)) {
-                    Text(
-                        text = fullName,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Text(
-                        text = phoneNumber,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // KYC Status Tile
-            val kycBadgeColor = when (kycStatus) {
-                "APPROVED" -> Color(0xFF2E7D32)
-                "PENDING" -> Color(0xFFF57F17)
-                else -> Color(0xFFC62828)
-            }
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(role = Role.Button, onClick = onKycClick),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Row(
-                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .background(
+                            Brush.linearGradient(
+                                listOf(
+                                    Color(0xFF031634),
+                                    Color(0xFF0B2F68),
+                                    Color(0xFF134898)
+                                )
+                            )
+                        )
+                        .padding(20.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = "Identity Verification (KYC)",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = "Status: $kycStatus",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = kycBadgeColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Text(text = "Manage →", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Security Settings Section
-            Text(
-                text = "Security & Access",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    // Biometric Unlock Switch
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
-                            Text(text = "Biometric Unlock", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                            Text(text = "Use fingerprint or face to login", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        // User Avatar
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF1A3F7A))
+                                .border(2.dp, Color.White.copy(alpha = 0.8f), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(30.dp)
+                            )
                         }
-                        Switch(
-                            checked = biometricsState,
-                            onCheckedChange = {
-                                biometricsState = it
-                                onBiometricsToggle(it)
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = fullName,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = "Verified",
+                                    tint = Color(0xFF22C55E),
+                                    modifier = Modifier.size(16.dp)
+                                )
                             }
-                        )
+
+                            Spacer(modifier = Modifier.height(2.dp))
+
+                            Text(
+                                text = phoneNumber,
+                                fontSize = 13.sp,
+                                color = Color.White.copy(alpha = 0.7f)
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Member Tier Badge
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFFFFB81C).copy(alpha = 0.20f))
+                                    .border(1.dp, Color(0xFFFFB81C).copy(alpha = 0.6f), RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 10.dp, vertical = 3.dp)
+                            ) {
+                                Text(
+                                    text = "SLA PLATINUM MEMBER",
+                                    color = Color(0xFFFFD466),
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    letterSpacing = 0.5.sp
+                                )
+                            }
+                        }
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Change PIN
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(onClick = onChangePinClick)
-                            .padding(vertical = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Change Security PIN", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                        Text(text = "→", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Active Devices
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(onClick = onSessionsClick)
-                            .padding(vertical = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Active Devices & Sessions", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                        Text(text = "→", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Logout Button
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(role = Role.Button, onClick = onLogoutClick),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Log Out",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFC62828)
-                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            // ─── SECURITY & ACCOUNT ────────────────────────────────────────
+            SettingsGroupHeader(title = "SECURITY & ACCESS")
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            ) {
+                Column {
+                    SettingsRow(
+                        icon = Icons.Default.Security,
+                        iconBg = Color(0xFFEFF8FF),
+                        iconTint = Color(0xFF1B63CD),
+                        title = "KYC Verification",
+                        subtitle = "National ID & selfie approved",
+                        trailing = {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color(0xFFDCFCE7))
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "Verified",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF16A34A)
+                                )
+                            }
+                        },
+                        onClick = onKycClick
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF2F4F7), thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
+
+                    SettingsRow(
+                        icon = Icons.Default.Fingerprint,
+                        iconBg = Color(0xFFF4F3FF),
+                        iconTint = Color(0xFF5925DC),
+                        title = "Biometric Authentication",
+                        subtitle = "Instant fingerprint / face unlock",
+                        trailing = {
+                            Switch(
+                                checked = biometricsState,
+                                onCheckedChange = {
+                                    biometricsState = it
+                                    onBiometricsToggle(it)
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = Color(0xFF031634)
+                                )
+                            )
+                        }
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF2F4F7), thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
+
+                    SettingsRow(
+                        icon = Icons.Default.Lock,
+                        iconBg = Color(0xFFFEF3F2),
+                        iconTint = Color(0xFFD92D20),
+                        title = "Change Security PIN",
+                        subtitle = "Update your 6-digit transaction PIN",
+                        onClick = onChangePinClick
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // ─── PREFERENCES ───────────────────────────────────────────────
+            SettingsGroupHeader(title = "PREFERENCES")
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            ) {
+                Column {
+                    SettingsRow(
+                        icon = Icons.Outlined.Language,
+                        iconBg = Color(0xFFECFDF3),
+                        iconTint = Color(0xFF027A48),
+                        title = "Language",
+                        subtitle = "English (US)",
+                        trailing = {
+                            Text(
+                                text = "English",
+                                fontSize = 13.sp,
+                                color = Color(0xFF667085)
+                            )
+                        }
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF2F4F7), thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
+
+                    SettingsRow(
+                        icon = Icons.Default.Notifications,
+                        iconBg = Color(0xFFFFF6ED),
+                        iconTint = Color(0xFFC4320A),
+                        title = "Push Notifications",
+                        subtitle = "Instant SMS & receipt alerts",
+                        trailing = {
+                            Switch(
+                                checked = notificationsState,
+                                onCheckedChange = { notificationsState = it },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = Color(0xFF031634)
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // ─── COOPERATIVE & SUPPORT ─────────────────────────────────────
+            SettingsGroupHeader(title = "COOPERATIVE LEGAL & HELP")
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            ) {
+                Column {
+                    SettingsRow(
+                        icon = Icons.Outlined.Description,
+                        iconBg = Color(0xFFF8F9FC),
+                        iconTint = Color(0xFF344054),
+                        title = "Cooperative Agreement & Bylaws",
+                        subtitle = "SLA Member rights and deposit guarantee"
+                    )
+
+                    HorizontalDivider(color = Color(0xFFF2F4F7), thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
+
+                    SettingsRow(
+                        icon = Icons.Outlined.HelpOutline,
+                        iconBg = Color(0xFFF8F9FC),
+                        iconTint = Color(0xFF344054),
+                        title = "24/7 Member Support",
+                        subtitle = "Hotline 8200 • support@savethegeneration.com.et"
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // ─── LOGOUT BUTTON ─────────────────────────────────────────────
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .clip(RoundedCornerShape(26.dp))
+                    .background(Color(0xFFFEE4E2))
+                    .clickable(role = Role.Button, onClick = onLogoutClick),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = null,
+                        tint = Color(0xFFD92D20),
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Sign Out of Vision SLA",
+                        color = Color(0xFFD92D20),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
 
-@Preview(name = "ProfileScreen - Light", showBackground = true)
 @Composable
-private fun ProfileScreenLightPreview() {
-    VblTheme(darkTheme = false) {
-        ProfileScreen()
-    }
+private fun SettingsGroupHeader(title: String) {
+    Text(
+        text = title,
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color(0xFF98A2B3),
+        letterSpacing = 1.sp,
+        modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+    )
 }
 
-@Preview(name = "ProfileScreen - Dark", showBackground = true)
 @Composable
-private fun ProfileScreenDarkPreview() {
-    VblTheme(darkTheme = true) {
-        ProfileScreen()
+private fun SettingsRow(
+    icon: ImageVector,
+    iconBg: Color,
+    iconTint: Color,
+    title: String,
+    subtitle: String,
+    trailing: (@Composable () -> Unit)? = null,
+    onClick: (() -> Unit)? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(iconBg),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
+            Column {
+                Text(
+                    text = title,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF101828)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 12.sp,
+                    color = Color(0xFF667085)
+                )
+            }
+        }
+
+        if (trailing != null) {
+            trailing()
+        } else if (onClick != null) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                contentDescription = null,
+                tint = Color(0xFFD0D5DD),
+                modifier = Modifier.size(13.dp)
+            )
+        }
     }
 }

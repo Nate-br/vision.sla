@@ -61,7 +61,7 @@ fun VblApp() {
         // ─── WELCOME HERO (SCREEN 2) ──────────────────────────────────
         composable("welcome") {
             WelcomeScreen(
-                onLearnMoreClick = {
+                onNextClick = {
                     navController.navigate("phone_input")
                 },
                 onSkipToDashboard = {
@@ -109,32 +109,28 @@ fun VblApp() {
             )
         }
 
-        // ─── HOME DASHBOARD (SCREEN 1) ─────────────────────────────────
+        // ─── MAIN APP CONTAINER (PERSISTENT DOCK ACROSS ALL TABS) ──────
         composable("home") {
-            HomeScreen(
-                onDepositClick = {
-                    navController.navigate("payments_provider_select")
+            MainContainerScreen(
+                onNavigateToPaymentInstruction = { provider ->
+                    navController.navigate("payments_instruction/${provider.name}")
                 },
-                onTransferClick = {
-                    navController.navigate("payments_provider_select")
+                onNavigateToLoanApplication = { _ ->
+                    navController.navigate("loan_application")
                 },
-                onWithdrawClick = {
-                    navController.navigate("loans_catalog")
+                onNavigateToKyc = {
+                    navController.navigate("kyc_upload")
                 },
                 onNotificationsClick = {
                     navController.navigate("notifications")
                 },
-                onProfileClick = {
-                    navController.navigate("profile")
-                },
-                onAnalyticsClick = {
-                    navController.navigate("expenses_bubbles")
-                },
-                onScanClick = {
-                    navController.navigate("payments_provider_select")
-                },
-                onSeeAllTransactionsClick = {
+                onSeeAllTransactions = {
                     navController.navigate("payments_timeline")
+                },
+                onLogout = {
+                    navController.navigate("welcome") {
+                        popUpTo("home") { inclusive = true }
+                    }
                 }
             )
         }

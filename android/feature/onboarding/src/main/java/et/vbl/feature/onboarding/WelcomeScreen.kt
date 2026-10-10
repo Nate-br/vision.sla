@@ -26,14 +26,26 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Nfc
+import androidx.compose.material.icons.outlined.AccountBalance
+import androidx.compose.material.icons.outlined.CreditScore
+import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,16 +54,21 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WelcomeScreen(
-    onLearnMoreClick: () -> Unit = {},
+    onNextClick: () -> Unit = {},
     onSkipToDashboard: () -> Unit = {}
 ) {
+    var showLearnMoreSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     val bgGradient = Brush.verticalGradient(
         listOf(
             Color(0xFF031634),
@@ -93,21 +110,21 @@ fun WelcomeScreen(
                     .fillMaxWidth()
                     .padding(top = 24.dp)
             ) {
-                // Skip button in top corner
+                // Top header with direct Dashboard shortcut
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
                         text = "Dashboard",
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.White.copy(alpha = 0.85f),
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
-                            .background(Color.White.copy(alpha = 0.12f))
+                            .background(Color.White.copy(alpha = 0.15f))
                             .clickable(onClick = onSkipToDashboard)
-                            .padding(horizontal = 14.dp, vertical = 6.dp)
+                            .padding(horizontal = 14.dp, vertical = 7.dp)
                     )
                 }
 
@@ -182,7 +199,7 @@ fun WelcomeScreen(
                             )
                             .padding(22.dp)
                     ) {
-                        // Geometric stylized pattern matching the photo
+                        // Geometric stylized pattern matching reference
                         Canvas(modifier = Modifier.fillMaxSize()) {
                             val w = size.width
                             val h = size.height
@@ -319,14 +336,14 @@ fun WelcomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // "Learn More" Pill Button
+                // "Learn More" Pill Button: Opens feature details bottom sheet
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(58.dp)
                         .clip(RoundedCornerShape(29.dp))
                         .background(Color.White)
-                        .clickable(role = Role.Button, onClick = onLearnMoreClick),
+                        .clickable(role = Role.Button, onClick = { showLearnMoreSheet = true }),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -337,13 +354,13 @@ fun WelcomeScreen(
                     )
                 }
 
-                // Arrow Circle Button
+                // Arrow Circle Button: Navigates forward into onboarding/login
                 Box(
                     modifier = Modifier
                         .size(58.dp)
                         .clip(CircleShape)
                         .background(Color.White)
-                        .clickable(role = Role.Button, onClick = onLearnMoreClick),
+                        .clickable(role = Role.Button, onClick = onNextClick),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -354,6 +371,137 @@ fun WelcomeScreen(
                     )
                 }
             }
+        }
+
+        // ─── LEARN MORE MODAL BOTTOM SHEET ──────────────────────────────────
+        if (showLearnMoreSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showLearnMoreSheet = false },
+                sheetState = sheetState,
+                containerColor = Color.White,
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Vision SLA Ecosystem",
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF101828)
+                        )
+                        IconButton(onClick = { showLearnMoreSheet = false }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                tint = Color(0xFF667085)
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = "Ethical, community-governed micro-finance cooperative engineered for financial freedom.",
+                        fontSize = 14.sp,
+                        color = Color(0xFF667085),
+                        lineHeight = 20.sp,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 20.dp)
+                    )
+
+                    // 3 Feature Pillars
+                    FeaturePillarRow(
+                        icon = Icons.Outlined.Security,
+                        title = "Guaranteed Cooperative Savings",
+                        description = "0% predatory fees with direct member dividends and transparent community oversight."
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    FeaturePillarRow(
+                        icon = Icons.Outlined.AccountBalance,
+                        title = "Instant Multi-Bank Settlement",
+                        description = "Automated real-time reconciliation with Telebirr, CBE Birr, and Bank of Abyssinia."
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    FeaturePillarRow(
+                        icon = Icons.Outlined.CreditScore,
+                        title = "Fair Member Micro-Loans",
+                        description = "Fast, collateral-free credit designed for entrepreneurs and emergency family relief."
+                    )
+
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    // Action Button inside Sheet
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(54.dp)
+                            .clip(RoundedCornerShape(27.dp))
+                            .background(Color(0xFF031634))
+                            .clickable(role = Role.Button) {
+                                showLearnMoreSheet = false
+                                onNextClick()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Get Started Now",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FeaturePillarRow(
+    icon: ImageVector,
+    title: String,
+    description: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) {
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFEFF4FF)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color(0xFF1B63CD),
+                modifier = Modifier.size(22.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(14.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF101828)
+            )
+            Spacer(modifier = Modifier.height(3.dp))
+            Text(
+                text = description,
+                fontSize = 13.sp,
+                color = Color(0xFF667085),
+                lineHeight = 18.sp
+            )
         }
     }
 }

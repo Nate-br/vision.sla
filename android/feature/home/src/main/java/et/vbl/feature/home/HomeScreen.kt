@@ -74,6 +74,9 @@ fun HomeScreen(
     growthText: String = "2.46% this month",
     cardNumberMasked: String = "•••• 9286",
     cardExpiry: String = "08/32",
+    showBottomDock: Boolean = true,
+    currentTab: Int = 0,
+    onTabSelected: (Int) -> Unit = {},
     onDepositClick: () -> Unit = {},
     onTransferClick: () -> Unit = {},
     onWithdrawClick: () -> Unit = {},
@@ -447,20 +450,103 @@ fun HomeScreen(
         }
 
         // ─── FLOATING BOTTOM DOCK ──────────────────────────────────────────
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(bottom = 16.dp)
+        if (showBottomDock) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(bottom = 16.dp)
+            ) {
+                FloatingBottomDock(
+                    currentTab = currentTab,
+                    onTabSelected = onTabSelected
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FloatingBottomDock(
+    currentTab: Int = 0,
+    onTabSelected: (Int) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(32.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF0F141E)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            FloatingBottomDock(
-                onHomeClick = {},
-                onTransferClick = onTransferClick,
-                onAnalyticsClick = onAnalyticsClick,
-                onScanClick = onScanClick,
-                onMenuClick = onProfileClick
+            // Tab 0: Card / Wallet
+            DockTabButton(
+                isSelected = currentTab == 0,
+                icon = Icons.Default.CreditCard,
+                contentDescription = "Wallet",
+                onClick = { onTabSelected(0) }
+            )
+
+            // Tab 1: Transfer ⇅
+            DockTabButton(
+                isSelected = currentTab == 1,
+                icon = Icons.Default.SwapVert,
+                contentDescription = "Transfer",
+                onClick = { onTabSelected(1) }
+            )
+
+            // Tab 2: Analytics 🕒
+            DockTabButton(
+                isSelected = currentTab == 2,
+                icon = Icons.Outlined.Schedule,
+                contentDescription = "Analytics",
+                onClick = { onTabSelected(2) }
+            )
+
+            // Tab 3: Loans [ ]
+            DockTabButton(
+                isSelected = currentTab == 3,
+                icon = Icons.Outlined.CropFree,
+                contentDescription = "Loans",
+                onClick = { onTabSelected(3) }
+            )
+
+            // Tab 4: Profile & Settings ⊞
+            DockTabButton(
+                isSelected = currentTab == 4,
+                icon = Icons.Outlined.Apps,
+                contentDescription = "Settings",
+                onClick = { onTabSelected(4) }
             )
         }
+    }
+}
+
+@Composable
+private fun DockTabButton(
+    isSelected: Boolean,
+    icon: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(42.dp)
+            .clip(CircleShape)
+            .background(if (isSelected) Color(0xFF222938) else Color.Transparent)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = if (isSelected) Color.White else Color.White.copy(alpha = 0.65f),
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 
@@ -560,92 +646,3 @@ private fun TransactionRow(
     }
 }
 
-@Composable
-private fun FloatingBottomDock(
-    onHomeClick: () -> Unit,
-    onTransferClick: () -> Unit,
-    onAnalyticsClick: () -> Unit,
-    onScanClick: () -> Unit,
-    onMenuClick: () -> Unit
-) {
-    Card(
-        shape = RoundedCornerShape(32.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF0F141E)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // 1. Active Tab: Card/Wallet inside rounded pill
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF222938))
-                    .clickable(onClick = onHomeClick),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.CreditCard,
-                    contentDescription = "Wallet",
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-
-            // 2. Transfer Tab: ⇅
-            IconButton(
-                onClick = onTransferClick,
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.SwapVert,
-                    contentDescription = "Transfer",
-                    tint = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            // 3. Analytics / Clock Tab: 🕒 -> Opens Expenses Bubbles Screen!
-            IconButton(
-                onClick = onAnalyticsClick,
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Schedule,
-                    contentDescription = "Expenses Analytics",
-                    tint = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            // 4. Scan QR Tab: [ ]
-            IconButton(
-                onClick = onScanClick,
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.CropFree,
-                    contentDescription = "Scan",
-                    tint = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-
-            // 5. Grid/Menu Tab: ⊞
-            IconButton(
-                onClick = onMenuClick,
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Apps,
-                    contentDescription = "More",
-                    tint = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-        }
-    }
-}

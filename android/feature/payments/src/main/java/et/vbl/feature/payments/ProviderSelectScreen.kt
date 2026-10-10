@@ -13,24 +13,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,140 +43,189 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import et.vbl.core.designsystem.theme.VblColors
 import et.vbl.core.model.PaymentProvider
 
-data class ProviderCategory(
-    val title: String,
-    val providers: List<PaymentProvider>
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProviderSelectScreen(
     onProviderSelected: (PaymentProvider) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var selectedFilterIndex by remember { mutableIntStateOf(0) }
 
-    val allProviders = remember { PaymentProvider.entries }
+    val filterTabs = listOf("All Methods", "Mobile Wallets", "Commercial Banks")
 
-    val filteredProviders = remember(searchQuery) {
-        if (searchQuery.isBlank()) {
-            allProviders
-        } else {
-            allProviders.filter {
-                it.displayName.contains(searchQuery, ignoreCase = true) ||
-                    it.name.contains(searchQuery, ignoreCase = true)
+    val allProviders = remember {
+        listOf(
+            PaymentProvider.TELEBIRR,
+            PaymentProvider.CBE,
+            PaymentProvider.BANK_OF_ABYSSINIA,
+            PaymentProvider.CBE_BIRR,
+            PaymentProvider.AWASH,
+            PaymentProvider.DASHEN,
+            PaymentProvider.MPESA,
+            PaymentProvider.COOPAY_EBIRR,
+            PaymentProvider.SIINQEE
+        )
+    }
+
+    val wallets = listOf(
+        PaymentProvider.TELEBIRR,
+        PaymentProvider.CBE_BIRR,
+        PaymentProvider.MPESA,
+        PaymentProvider.COOPAY_EBIRR
+    )
+
+    val displayedProviders = remember(searchQuery, selectedFilterIndex) {
+        allProviders.filter { provider ->
+            val matchesFilter = when (selectedFilterIndex) {
+                1 -> provider in wallets
+                2 -> provider !in wallets
+                else -> true
+            }
+            val matchesQuery = searchQuery.isBlank() ||
+                provider.displayName.contains(searchQuery, ignoreCase = true) ||
+                provider.name.contains(searchQuery, ignoreCase = true)
+
+            matchesFilter && matchesQuery
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF8F9FC))
+            .statusBarsPadding()
+    ) {
+        // ─── TOP APP BAR ───────────────────────────────────────────────
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .clickable(onClick = onBackClick),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color(0xFF101828),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column {
+                Text(
+                    text = "Deposit & Transfer",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF101828)
+                )
+                Text(
+                    text = "Choose your payment provider",
+                    fontSize = 13.sp,
+                    color = Color(0xFF667085)
+                )
             }
         }
-    }
 
-    val wallets = remember(filteredProviders) {
-        filteredProviders.filter {
-            it in listOf(
-                PaymentProvider.TELEBIRR,
-                PaymentProvider.CBE_BIRR,
-                PaymentProvider.MPESA,
-                PaymentProvider.KAAFI_EBIRR,
-                PaymentProvider.COOPAY_EBIRR
-            )
-        }
-    }
-
-    val banks = remember(filteredProviders) {
-        filteredProviders.filter { it !in wallets }
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            TopAppBar(
-                title = {
+        // ─── SEARCH INPUT ──────────────────────────────────────────────
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = {
                     Text(
-                        text = "Choose Payment Method",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        text = "Search Telebirr, CBE, Abyssinia...",
+                        fontSize = 14.sp,
+                        color = Color(0xFF98A2B3)
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-
-            Column(
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        tint = Color(0xFF98A2B3),
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(26.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    focusedBorderColor = Color(0xFF1B63CD),
+                    unfocusedBorderColor = Color(0xFFE4E7EC)
+                ),
+                singleLine = true
+            )
+        }
 
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Search bank or mobile wallet...") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+        // ─── FILTER TABS ───────────────────────────────────────────────
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            filterTabs.forEachIndexed { index, tab ->
+                val isSelected = selectedFilterIndex == index
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(if (isSelected) Color(0xFF031634) else Color.White)
+                        .clickable { selectedFilterIndex = index }
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
-                    if (wallets.isNotEmpty()) {
-                        item {
-                            Text(
-                                text = "MOBILE MONEY WALLETS",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                        }
-
-                        items(wallets) { provider ->
-                            ProviderListItem(
-                                provider = provider,
-                                onClick = { onProviderSelected(provider) }
-                            )
-                        }
-                    }
-
-                    if (banks.isNotEmpty()) {
-                        item {
-                            Text(
-                                text = "COMMERCIAL BANKS",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
-                            )
-                        }
-
-                        items(banks) { provider ->
-                            ProviderListItem(
-                                provider = provider,
-                                onClick = { onProviderSelected(provider) }
-                            )
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
+                    Text(
+                        text = tab,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                        color = if (isSelected) Color.White else Color(0xFF667085)
+                    )
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // ─── PROVIDERS LIST ────────────────────────────────────────────
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(displayedProviders, key = { it.name }) { provider ->
+                ProviderCard(
+                    provider = provider,
+                    onClick = { onProviderSelected(provider) }
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
 }
 
 @Composable
-fun ProviderListItem(
+private fun ProviderCard(
     provider: PaymentProvider,
     onClick: () -> Unit
 ) {
@@ -182,67 +233,59 @@ fun ProviderListItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Provider Avatar / Initial
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (provider.isSupported) VblColors.PrimaryBlueLight else VblColors.WarningLight
-                    ),
-                contentAlignment = Alignment.Center
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = provider.displayName.take(2).uppercase(),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = if (provider.isSupported) VblColors.PrimaryBlue else VblColors.Warning,
-                    fontWeight = FontWeight.Bold
+                // Authentic Vector Bank Logo
+                BankLogoBadge(
+                    provider = provider,
+                    size = 46.dp
                 )
-            }
 
-            Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(14.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = provider.displayName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = if (provider.isSupported) "Instant Automated Verification" else "Requires Manual Review",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (provider.isSupported) VblColors.Success else VblColors.Warning
-                )
-            }
-
-            if (!provider.isSupported) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(VblColors.WarningLight)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
+                Column {
                     Text(
-                        text = "MANUAL",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = VblColors.Warning,
-                        fontWeight = FontWeight.Bold
+                        text = provider.displayName,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF101828)
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF22C55E))
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = "Instant 0% Fee Clearing",
+                            fontSize = 12.sp,
+                            color = Color(0xFF667085)
+                        )
+                    }
                 }
             }
+
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                contentDescription = null,
+                tint = Color(0xFFD0D5DD),
+                modifier = Modifier.size(14.dp)
+            )
         }
     }
 }
