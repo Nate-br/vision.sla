@@ -210,9 +210,7 @@ fun VblApp() {
         composable("loan_application") {
             LoanApplicationScreen(
                 onSubmitApplication = { _, _, _ ->
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = true }
-                    }
+                    navController.popBackStack()
                 },
                 onBackClick = { navController.popBackStack() }
             )

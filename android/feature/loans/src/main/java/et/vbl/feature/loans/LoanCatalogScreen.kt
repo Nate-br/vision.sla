@@ -109,15 +109,16 @@ fun LoanCatalogScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF031634))
+            .background(Color(0xFFF7F9FC))
     ) {
-        // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
+        // ─── TOP HERO BLUE HEADER (ROUNDED BOTTOM CORNERS AS IN REFERENCE) ───
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp))
                 .background(heroGradient)
                 .statusBarsPadding()
-                .padding(top = 10.dp, bottom = 18.dp)
+                .padding(top = 10.dp, bottom = 22.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
                 // Top App Bar
@@ -159,7 +160,44 @@ fun LoanCatalogScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Available Credit Highlight Banner
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Pre-Approved Credit Limit",
+                        color = Color.White.copy(alpha = 0.75f),
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "ETB 150,000.00",
+                        color = Color.White,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.5).sp
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color.White.copy(alpha = 0.16f))
+                            .border(1.dp, Color.White.copy(alpha = 0.22f), RoundedCornerShape(16.dp))
+                            .padding(horizontal = 14.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "Zero Collateral • Instant Disbursal",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Information banner pill
                 Card(
@@ -184,26 +222,20 @@ fun LoanCatalogScreen(
             }
         }
 
-        // ─── WHITE CURVED BODY CONTAINER ──────────────────────────────
-        Card(
+        // ─── LIST CONTAINER ───────────────────────────────────────────
+        LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .weight(1f),
-            shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 140.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 140.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                items(products) { product ->
-                    ProductCardItem(
-                        product = product,
-                        onCalculateClick = { onCalculateClick(product) },
-                        onApplyClick = { onApplyClick(product) }
-                    )
-                }
+            items(products) { product ->
+                ProductCardItem(
+                    product = product,
+                    onCalculateClick = { onCalculateClick(product) },
+                    onApplyClick = { onApplyClick(product) }
+                )
             }
         }
     }

@@ -82,15 +82,16 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF031634))
+            .background(Color(0xFFF7F9FC))
     ) {
-        // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
+        // ─── TOP HERO BLUE HEADER (ROUNDED BOTTOM CORNERS AS IN REFERENCE) ───
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp))
                 .background(heroGradient)
                 .statusBarsPadding()
-                .padding(top = 10.dp, bottom = 18.dp)
+                .padding(top = 10.dp, bottom = 22.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -223,20 +224,14 @@ fun ProfileScreen(
             }
         }
 
-        // ─── WHITE CURVED BODY CONTAINER ──────────────────────────────
-        Card(
+        // ─── SETTINGS LIST CONTAINER ──────────────────────────────────
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+                .fillMaxSize()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 20.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
-            ) {
 
             // ─── SECURITY & ACCOUNT ────────────────────────────────────────
             SettingsGroupHeader(title = "SECURITY & ACCESS")
@@ -418,7 +413,6 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(140.dp))
         }
     }
-}
 }
 
 @Composable

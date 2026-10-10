@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import et.vbl.feature.profile.ProfileScreen
 
 @Composable
 fun MainContainerScreen(
+    initialTab: Int = 0,
     onNavigateToPaymentInstruction: (PaymentProvider) -> Unit = {},
     onNavigateToLoanApplication: (LoanProductUiModel) -> Unit = {},
     onNavigateToKyc: () -> Unit = {},
@@ -31,7 +33,7 @@ fun MainContainerScreen(
     onSeeAllTransactions: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
-    var currentTab by remember { mutableIntStateOf(0) }
+    var currentTab by rememberSaveable { mutableIntStateOf(initialTab) }
 
     Box(
         modifier = Modifier.fillMaxSize()

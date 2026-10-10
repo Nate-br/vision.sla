@@ -149,15 +149,16 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF031634))
+            .background(Color(0xFFF7F9FC))
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
+            // ─── TOP HERO BLUE HEADER (ROUNDED BOTTOM CORNERS AS IN REFERENCE) ───
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp))
                     .background(heroGradient)
                     .statusBarsPadding()
                     .padding(top = 10.dp)
@@ -354,98 +355,91 @@ fun HomeScreen(
                 }
             }
 
-            // ─── WHITE CURVED CONTAINER ────────────────────────────────────
-            Card(
+            // ─── LIGHT CONTAINER WITH ACTIONS & RECENT SAVINGS/LOANS ───────
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                contentPadding = PaddingValues(bottom = 120.dp)
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 100.dp)
-                ) {
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
+                item {
+                    Spacer(modifier = Modifier.height(18.dp))
 
-                        // Quick Action Buttons Row: [↗ Deposit] [⇅] [↘ Apply Loan]
-                        Row(
+                    // Quick Action Buttons Row: [↗ Deposit] [⇅] [↘ Apply Loan]
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Deposit / Save Button
+                        QuickActionPill(
+                            icon = Icons.Default.NorthEast,
+                            label = "Deposit",
+                            onClick = onDepositClick,
+                            modifier = Modifier.weight(1.3f)
+                        )
+
+                        // Transfer Button (Circular Icon)
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .size(52.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFE9ECF2))
+                                .clickable(role = Role.Button, onClick = onTransferClick),
+                            contentAlignment = Alignment.Center
                         ) {
-                            // Deposit / Save Button
-                            QuickActionPill(
-                                icon = Icons.Default.NorthEast,
-                                label = "Deposit",
-                                onClick = onDepositClick,
-                                modifier = Modifier.weight(1.3f)
-                            )
-
-                            // Transfer Button (Circular Icon)
-                            Box(
-                                modifier = Modifier
-                                    .size(52.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFF1F3F7))
-                                    .clickable(role = Role.Button, onClick = onTransferClick),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.SwapVert,
-                                    contentDescription = "Transfer",
-                                    tint = Color(0xFF101828),
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-
-                            // Loan Button (NO WITHDRAW)
-                            QuickActionPill(
-                                icon = Icons.Default.SouthEast,
-                                label = "Apply Loan",
-                                onClick = onLoanClick,
-                                modifier = Modifier.weight(1.3f)
+                            Icon(
+                                imageVector = Icons.Default.SwapVert,
+                                contentDescription = "Transfer",
+                                tint = Color(0xFF101828),
+                                modifier = Modifier.size(24.dp)
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(28.dp))
-
-                        // Recent Savings & Loans Header
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Recent Savings & Loans",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF101828)
-                            )
-                            Text(
-                                text = "View All",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color(0xFF98A2B3),
-                                modifier = Modifier.clickable(onClick = onSeeAllTransactionsClick)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(14.dp))
-                    }
-
-                    // Transactions List
-                    items(transactions, key = { it.id }) { tx ->
-                        TransactionRow(
-                            transaction = tx,
-                            onClick = onSeeAllTransactionsClick
+                        // Loan Button (NO WITHDRAW)
+                        QuickActionPill(
+                            icon = Icons.Default.SouthEast,
+                            label = "Apply Loan",
+                            onClick = onLoanClick,
+                            modifier = Modifier.weight(1.3f)
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(26.dp))
+
+                    // Section Title: "Recent Savings & Loans"
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Recent Savings & Loans",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF101828)
+                        )
+                        Text(
+                            text = "View All",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF98A2B3),
+                            modifier = Modifier.clickable(onClick = onSeeAllTransactionsClick)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+
+                items(transactions, key = { it.id }) { tx ->
+                    TransactionRow(
+                        transaction = tx,
+                        onClick = onSeeAllTransactionsClick
+                    )
                 }
             }
         }
@@ -589,50 +583,28 @@ private fun TransactionRow(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+            .padding(horizontal = 24.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Icon Circle
-            Box(
-                modifier = Modifier
-                    .size(46.dp)
-                    .clip(CircleShape)
-                    .background(transaction.iconBg),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = transaction.icon,
-                    contentDescription = null,
-                    tint = Color(0xFF344054),
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(14.dp))
-
-            Column {
-                Text(
-                    text = transaction.title,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF101828)
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = transaction.dateSubtitle,
-                    fontSize = 13.sp,
-                    color = Color(0xFF98A2B3)
-                )
-            }
+        Column {
+            Text(
+                text = transaction.title,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF101828)
+            )
+            Spacer(modifier = Modifier.height(3.dp))
+            Text(
+                text = transaction.dateSubtitle,
+                fontSize = 13.sp,
+                color = Color(0xFF98A2B3)
+            )
         }
 
         Text(
             text = transaction.amountFormatted,
-            fontSize = 15.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF101828)
         )

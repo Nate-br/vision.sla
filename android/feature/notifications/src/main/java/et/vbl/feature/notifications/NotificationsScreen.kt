@@ -72,12 +72,13 @@ fun NotificationsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF031634))
+            .background(Color(0xFFF7F9FC))
     ) {
-        // ─── TOP HERO BLUE HEADER ──────────────────────────────────────
+        // ─── TOP HERO BLUE HEADER (ROUNDED BOTTOM CORNERS AS IN REFERENCE) ───
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp))
                 .background(heroGradient)
                 .statusBarsPadding()
                 .padding(top = 10.dp, bottom = 22.dp)
@@ -123,44 +124,36 @@ fun NotificationsScreen(
             }
         }
 
-        // ─── WHITE CURVED BODY CONTAINER ──────────────────────────────
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            shape = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-            if (notifications.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 64.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No notifications yet",
-                        fontSize = 15.sp,
-                        color = Color(0xFF98A2B3)
+        // ─── LIST CONTAINER ───────────────────────────────────────────
+        if (notifications.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 64.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No notifications yet",
+                    fontSize = 15.sp,
+                    color = Color(0xFF98A2B3)
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp, vertical = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(notifications, key = { it.id }) { notif ->
+                    NotificationCard(
+                        notification = notif,
+                        onClick = { onNotificationClick(notif.id) }
                     )
                 }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 20.dp, vertical = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(notifications, key = { it.id }) { notif ->
-                        NotificationCard(
-                            notification = notif,
-                            onClick = { onNotificationClick(notif.id) }
-                        )
-                    }
 
-                    item {
-                        Spacer(modifier = Modifier.height(60.dp))
-                    }
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
                 }
             }
         }
